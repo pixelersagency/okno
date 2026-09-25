@@ -51,8 +51,14 @@ jobs:
         run: |
           PRERELEASE=""
           case "$VERSION" in *-*) PRERELEASE="--prerelease" ;; esac
-          gh release create "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" \
-            --title "Okno $VERSION" --notes-file notes.md $PRERELEASE
+          # Relancer le workflow sur un tag déjà publié remplace le zip au
+          # lieu d'échouer (utile si seule la publication npm avait raté).
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" \
+              --title "Okno $VERSION" --notes-file notes.md $PRERELEASE
+          fi
 
       - name: Publish bridge to npm
         if: ${{ env.NPM_TOKEN != '' }}
@@ -62,4 +68,8 @@ jobs:
         run: |
           TAG=latest
           case "$VERSION" in *-*) TAG=next ;; esac
+          if npm view "$(node -p "require('./package.json').name")@$VERSION" version > /dev/null 2>&1; then
+            echo "Already on npm, skipping."
+            exit 0
+          fi
           npm publish --access public --provenance --tag "$TAG"
