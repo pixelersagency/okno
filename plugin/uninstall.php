@@ -1,0 +1,47 @@
+<?php
+/**
+ * Désinstallation (suppression du plugin depuis wp-admin, pas la simple
+ * désactivation) : retire toutes les données d'Okno. Les champs ACF et les
+ * contenus modifiés avec Okno ne sont pas touchés : ils appartiennent au site.
+ *
+ * @package Okno
+ */
+
+defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
+
+/**
+ * Nettoie le site courant.
+ */
+function okno_uninstall_site() {
+	global $wpdb;
+
+	foreach ( array( 'okno_settings', 'okno_secrets', 'okno_deploy_history', 'okno_usage', 'okno_connection', 'okno_activity_db_version' ) as $option ) {
+		delete_option( $option );
+	}
+
+	// Transients, y compris ceux suffixés par utilisateur (okno_gh_preflight_12).
+	$wpdb->query(
+		"DELETE FROM {$wpdb->options}
+		WHERE option_name LIKE '\_transient\_okno\_%'
+		OR option_name LIKE '\_transient\_timeout\_okno\_%'"
+	);
+
+	// Métas internes : empreinte de révision et chemin de page personnalisé.
+	delete_post_meta_by_key( '_okno_rev' );
+	delete_post_meta_by_key( '_okno_path' );
+
+	// Journal des modifications.
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}okno_activity" );
+
+	wp_clear_scheduled_hook( 'okno_cleanup_deploys' );
+}
+
+if ( is_multisite() ) {
+	foreach ( get_sites( array( 'fields' => 'ids', 'number' => 0 ) ) as $okno_site_id ) {
+		switch_to_blog( $okno_site_id );
+		okno_uninstall_site();
+		restore_current_blog();
+	}
+} else {
+	okno_uninstall_site();
+}

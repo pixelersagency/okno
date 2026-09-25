@@ -1,0 +1,51 @@
+=== Okno ===
+Contributors: pixelersagency
+Tags: headless, acf, visual editor, nextjs, astro
+Requires at least: 6.0
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 1.0.0-beta.1
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Visual editing for headless WordPress. Editors see the real front end inside wp-admin, click, edit ACF fields live, save and publish.
+
+== Description ==
+
+Okno loads your headless front end (Next.js, Astro, Remix, Vite, Nuxt, SvelteKit or plain HTML) inside wp-admin. Editors click an element, edit the ACF field behind it, watch the page update as they type, then save and publish.
+
+* Works with any front end through a small, dependency-free bridge script. React apps get a one-line component.
+* Uses the ACF fields you already have: text, WYSIWYG, images, galleries, links, relationships, repeaters, groups and flexible content.
+* Page composition: add, reorder, duplicate and remove flexible content blocks.
+* Undo and redo, local drafts, conflict protection and a full change history.
+* Publishing modes: live content, build hook (Vercel, Netlify, Cloudflare Pages), GitHub Actions with live status, publish commit, Coolify.
+* No public endpoint and no secret on the front end.
+
+The admin interface is currently in French.
+
+Documentation, framework examples and the bridge package: https://github.com/pixelersagency/okno
+
+== Installation ==
+
+1. Upload the plugin zip in Plugins → Add New → Upload Plugin, then activate it.
+2. Install Advanced Custom Fields (free or Pro).
+3. Open Okno → Démarrer and follow the steps: front-end address, frame-ancestors header, bridge script, connection test.
+
+== Frequently Asked Questions ==
+
+= Does my site need to be built with React? =
+
+No. The bridge is plain JavaScript and works with any HTML page. React apps can use the optional component.
+
+= Does Okno store content somewhere else? =
+
+No. Everything is saved to your existing ACF fields and post data.
+
+= What happens to my data if I delete the plugin? =
+
+Okno removes its own settings, tokens, history table and internal post meta. Your content and ACF fields are left untouched.
+
+== Changelog ==
+
+= 1.0.0-beta.1 =
+* First public release. See CHANGELOG.md on GitHub for details.

@@ -1,0 +1,219 @@
+/**
+ * Okno — pages d'administration : copie, onglets de code, champs du mode de
+ * mise en ligne, vérifications de connexion en direct.
+ */
+( function () {
+	'use strict';
+
+	var cfg = window.OknoAdmin || {};
+	var t = cfg.strings || {};
+	var apiFetch = window.wp && window.wp.apiFetch;
+
+	function format( template ) {
+		var args = Array.prototype.slice.call( arguments, 1 );
+		return String( template ).replace( /%(\d)\$[sd]/g, function ( m, i ) {
+			return args[ Number( i ) - 1 ];
+		} );
+	}
+
+	/* ── Copier ─────────────────────────────────────────────────────── */
+
+	function copyText( text, button ) {
+		var done = function () {
+			var label = button.textContent;
+			button.textContent = t.copied || 'Copié';
+			setTimeout( function () {
+				button.textContent = label;
+			}, 1600 );
+		};
+
+		if ( navigator.clipboard && window.isSecureContext ) {
+			navigator.clipboard.writeText( text ).then( done );
+			return;
+		}
+
+		// Repli : wp-admin servi en HTTP simple, pas d'API presse-papiers.
+		var area = document.createElement( 'textarea' );
+		area.value = text;
+		area.setAttribute( 'readonly', '' );
+		area.style.position = 'absolute';
+		area.style.left = '-9999px';
+		document.body.appendChild( area );
+		area.select();
+		try {
+			document.execCommand( 'copy' );
+			done();
+		} catch ( e ) {
+			/* Rien : le texte reste sélectionnable à la main. */
+		}
+		area.remove();
+	}
+
+	document.addEventListener( 'click', function ( event ) {
+		var direct = event.target.closest( '[data-okno-copy]' );
+		if ( direct ) {
+			copyText( direct.getAttribute( 'data-okno-copy' ), direct );
+			return;
+		}
+		var from = event.target.closest( '[data-okno-copy-from]' );
+		if ( from ) {
+			var source = document.getElementById( from.getAttribute( 'data-okno-copy-from' ) );
+			if ( source ) {
+				copyText( source.value, from );
+			}
+		}
+	} );
+
+	/* ── Onglets de code (HTML / React) ─────────────────────────────── */
+
+	document.querySelectorAll( '[data-okno-segmented]' ).forEach( function ( group ) {
+		var buttons = group.querySelectorAll( 'button[data-panel]' );
+		var scope = group.parentElement;
+
+		function select( name ) {
+			buttons.forEach( function ( b ) {
+				b.setAttribute( 'aria-selected', b.getAttribute( 'data-panel' ) === name ? 'true' : 'false' );
+			} );
+			scope.querySelectorAll( '[data-panel-id]' ).forEach( function ( panel ) {
+				panel.hidden = panel.getAttribute( 'data-panel-id' ) !== name;
+			} );
+		}
+
+		buttons.forEach( function ( b ) {
+			b.addEventListener( 'click', function () {
+				select( b.getAttribute( 'data-panel' ) );
+			} );
+		} );
+	} );
+
+	/* ── Réglages : n'afficher que les champs du mode choisi ────────── */
+
+	var radios = document.querySelectorAll( '[data-okno-driver]' );
+	if ( radios.length ) {
+		var syncDriverFields = function () {
+			var current = '';
+			radios.forEach( function ( r ) {
+				if ( r.checked ) {
+					current = r.value;
+				}
+			} );
+			document.querySelectorAll( '[data-okno-driver-fields]' ).forEach( function ( block ) {
+				var list = block.getAttribute( 'data-okno-driver-fields' ).split( /\s+/ );
+				block.hidden = list.indexOf( current ) === -1;
+			} );
+		};
+		radios.forEach( function ( r ) {
+			r.addEventListener( 'change', syncDriverFields );
+		} );
+		syncDriverFields();
+	}
+
+	/* ── Démarrer : vérifications en direct ─────────────────────────── */
+
+	function showResult( el, level, message ) {
+		el.hidden = false;
+		el.className = 'okno-check' + ( level ? ' okno-check--' + level : '' );
+		el.innerHTML = '';
+		var dot = document.createElement( 'span' );
+		dot.className = 'okno-dot' + ( level ? ' okno-dot--' + level : '' );
+		var text = document.createElement( 'span' );
+		text.textContent = message;
+		el.appendChild( dot );
+		el.appendChild( text );
+	}
+
+	var headersButton = document.querySelector( '[data-okno-check-headers]' );
+	var headersResult = document.querySelector( '[data-okno-headers-result]' );
+	if ( headersButton && headersResult && apiFetch ) {
+		headersButton.addEventListener( 'click', function () {
+			headersButton.disabled = true;
+			showResult( headersResult, '', t.checking || '…' );
+			apiFetch( { path: '/okno/v1/connection' } )
+				.then( function ( res ) {
+					showResult( headersResult, res.level, res.message );
+				} )
+				.catch( function ( err ) {
+					showResult( headersResult, 'error', ( err && err.message ) || t.headersFailed );
+				} )
+				.finally( function () {
+					headersButton.disabled = false;
+				} );
+		} );
+	}
+
+	/**
+	 * Test du bridge : on charge le site dans une iframe invisible et on attend
+	 * son handshake. C'est exactement ce que fera l'éditeur.
+	 */
+	var testButton = document.querySelector( '[data-okno-test-bridge]' );
+	var testResult = document.querySelector( '[data-okno-bridge-result]' );
+	if ( testButton && testResult && cfg.previewUrl ) {
+		testButton.addEventListener( 'click', function () {
+			testButton.disabled = true;
+			showResult( testResult, '', t.testing || '…' );
+
+			var frame = document.createElement( 'iframe' );
+			frame.setAttribute( 'aria-hidden', 'true' );
+			frame.setAttribute( 'tabindex', '-1' );
+			frame.style.cssText = 'position:absolute;left:-9999px;width:1280px;height:800px;border:0;';
+
+			var finished = false;
+			var timer;
+
+			function finish( payload ) {
+				if ( finished ) {
+					return;
+				}
+				finished = true;
+				clearTimeout( timer );
+				window.removeEventListener( 'message', onMessage );
+				frame.remove();
+				testButton.disabled = false;
+
+				if ( ! payload ) {
+					showResult( testResult, 'error', t.bridgeTimeout );
+				} else if ( ! payload.fields ) {
+					showResult( testResult, 'warn', t.bridgeNoFields );
+				} else {
+					showResult( testResult, 'ok', format( t.bridgeOk, payload.version, payload.fields, payload.sections ) );
+				}
+
+				if ( apiFetch ) {
+					apiFetch( {
+						path: '/okno/v1/connection',
+						method: 'POST',
+						data: {
+							ok: !! payload,
+							version: payload ? String( payload.version ) : '',
+							fields: payload ? payload.fields : 0,
+							sections: payload ? payload.sections : 0,
+						},
+					} ).catch( function () {} );
+				}
+			}
+
+			function onMessage( event ) {
+				if ( event.origin !== cfg.frontOrigin || event.source !== frame.contentWindow ) {
+					return;
+				}
+				var data = event.data;
+				if ( ! data || 'okno' !== data.ns || 'ready' !== data.type ) {
+					return;
+				}
+				var fields = 0;
+				Object.keys( data.posts || {} ).forEach( function ( id ) {
+					fields += ( data.posts[ id ] || [] ).length;
+				} );
+				finish( { version: data.version || 1, fields: fields, sections: ( data.sections || [] ).length } );
+			}
+
+			window.addEventListener( 'message', onMessage );
+			timer = setTimeout( function () {
+				finish( null );
+			}, 10000 );
+
+			frame.src = cfg.previewUrl + ( cfg.previewUrl.indexOf( '?' ) === -1 ? '?' : '&' ) + 'okno-check=' + Date.now();
+			document.body.appendChild( frame );
+		} );
+	}
+} )();

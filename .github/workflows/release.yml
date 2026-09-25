@@ -1,0 +1,65 @@
+name: Release
+
+# Push a tag like v1.0.0 or v1.0.0-beta.2: the plugin zip is attached to a
+# GitHub release, and the bridge is published to npm when NPM_TOKEN is set.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Tag matches plugin version
+        run: |
+          VERSION="$(sed -n "s/^define( 'OKNO_VERSION', '\(.*\)' );/\1/p" plugin/okno.php)"
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match plugin version $VERSION" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Build zip
+        run: ./scripts/build-zip.sh
+
+      - name: Release notes
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on && /^\[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          test -s notes.md || echo "See CHANGELOG.md." > notes.md
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          case "$VERSION" in *-*) PRERELEASE="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" \
+            --title "Okno $VERSION" --notes-file notes.md $PRERELEASE
+
+      - name: Publish bridge to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: bridge
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          TAG=latest
+          case "$VERSION" in *-*) TAG=next ;; esac
+          npm publish --access public --provenance --tag "$TAG"

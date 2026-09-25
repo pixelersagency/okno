@@ -1,0 +1,34 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: Okno 1.0.0-beta.1, WordPress 6.8, ACF Pro 6.4, PHP 8.2
+    validations:
+      required: true
+  - type: input
+    id: front
+    attributes:
+      label: Front-end framework
+      placeholder: Next.js 15 (app router), Astro 5, plain HTML…
+  - type: dropdown
+    id: publish
+    attributes:
+      label: Publishing mode
+      options: [Live content, Build hook, GitHub Actions, GitHub commit, Coolify, Not relevant]
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Errors from the wp-admin console and from the preview iframe (pick the iframe in the console's context menu).
+      render: text

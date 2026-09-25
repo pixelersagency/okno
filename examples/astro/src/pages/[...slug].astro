@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const WP = import.meta.env.PUBLIC_WORDPRESS_URL;
+  const res = await fetch(`${WP}/wp-json/wp/v2/pages?per_page=100&acf_format=standard`);
+  const pages = await res.json();
+  return pages.map((page) => ({
+    params: { slug: page.slug === 'home' ? undefined : page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+---
+<Base title={page.title.rendered}>
+  <main data-wp-post={page.id}>
+    <h1 data-wp-field="_title" data-okno-apply="html" set:html={page.title.rendered} />
+
+    <!-- Always render annotated elements, even when empty. -->
+    <p data-wp-field="intro">{page.acf.intro ?? ''}</p>
+
+    <img
+      data-wp-field="hero_image"
+      src={page.acf.hero_image ? page.acf.hero_image.url : ''}
+      alt={page.acf.hero_image ? page.acf.hero_image.alt : ''}
+    />
+
+    <div data-wp-field="body" set:html={page.acf.body ?? ''} />
+  </main>
+</Base>

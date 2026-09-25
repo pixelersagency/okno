@@ -1,0 +1,1367 @@
+/*
+ * Okno — éditeur visuel.
+ *
+ * Plein écran au-dessus de wp-admin, trois zones : navigation du site à
+ * gauche, aperçu au centre, champs de la sélection à droite. Mêmes tokens que
+ * les pages d'administration (admin.css), thème clair et sombre.
+ */
+
+/* L'attribut hidden gagne toujours, même sur un élément à display explicite. */
+.okno-editor [hidden],
+.okno-editor-setup [hidden] {
+	display: none !important;
+}
+
+/* La page wp-admin derrière l'éditeur ne défile pas. */
+html.okno-fullscreen,
+html.okno-fullscreen body {
+	overflow: hidden !important;
+}
+
+/* Texte réservé aux lecteurs d'écran (même règle que wp-admin, pour ne pas
+   en dépendre). */
+.okno-editor .screen-reader-text,
+body > .screen-reader-text[role="status"] {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect( 1px, 1px, 1px, 1px );
+	clip-path: inset( 50% );
+	border: 0;
+	white-space: nowrap;
+	word-wrap: normal !important;
+}
+
+/* ── Tokens ────────────────────────────────────────────────────────── */
+
+.okno-editor {
+	--okno-bg: #ffffff;
+	--okno-surface: #f6f6f8;
+	--okno-canvas: #ececf0;
+	--okno-line: #e3e4e8;
+	--okno-line-strong: #d3d4da;
+	--okno-ink: #1c1d22;
+	--okno-body: #42444d;
+	--okno-muted: #6c6f7b;
+	--okno-faint: #9a9da8;
+	--okno-accent: #5b5bd6;
+	--okno-accent-hover: #4a4ac4;
+	--okno-accent-soft: #eeeefb;
+	--okno-accent-line: #cfcff4;
+	--okno-ok: #1a7f4b;
+	--okno-ok-soft: #e7f5ee;
+	--okno-warn: #8a5a00;
+	--okno-warn-soft: #fdf3dc;
+	--okno-error: #b42318;
+	--okno-error-soft: #fdecea;
+	--okno-shadow: 0 1px 2px rgba( 16, 17, 22, 0.06 ), 0 8px 28px rgba( 16, 17, 22, 0.08 );
+	--okno-radius: 10px;
+	color-scheme: light;
+}
+
+.okno-editor[data-theme='dark'] {
+	--okno-bg: #1b1c21;
+	--okno-surface: #23242b;
+	--okno-canvas: #121317;
+	--okno-line: #2e3038;
+	--okno-line-strong: #3b3d47;
+	--okno-ink: #ecedf2;
+	--okno-body: #c4c6d0;
+	--okno-muted: #969aa8;
+	--okno-faint: #6f7280;
+	--okno-accent: #8b8bf5;
+	--okno-accent-hover: #a0a0f7;
+	--okno-accent-soft: rgba( 139, 139, 245, 0.14 );
+	--okno-accent-line: rgba( 139, 139, 245, 0.35 );
+	--okno-ok: #6fd39a;
+	--okno-ok-soft: rgba( 70, 190, 120, 0.14 );
+	--okno-warn: #e8c268;
+	--okno-warn-soft: rgba( 240, 195, 80, 0.14 );
+	--okno-error: #f39a90;
+	--okno-error-soft: rgba( 235, 90, 80, 0.14 );
+	--okno-shadow: 0 1px 2px rgba( 0, 0, 0, 0.4 ), 0 12px 32px rgba( 0, 0, 0, 0.45 );
+	color-scheme: dark;
+}
+
+/* ── Coque plein écran ─────────────────────────────────────────────── */
+
+.okno-editor {
+	position: fixed;
+	inset: 0;
+	z-index: 100000; /* Au-dessus de la barre d'admin WordPress (99999). */
+	display: flex;
+	flex-direction: column;
+	background: var(--okno-canvas);
+	color: var(--okno-body);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.okno-editor *,
+.okno-editor *::before,
+.okno-editor *::after {
+	box-sizing: border-box;
+}
+
+.okno-editor button {
+	font-family: inherit;
+}
+
+.okno-editor :focus-visible {
+	outline: 2px solid var(--okno-accent);
+	outline-offset: 2px;
+}
+
+.okno-icon {
+	flex: 0 0 auto;
+	display: block;
+}
+
+/* ── Boutons ───────────────────────────────────────────────────────── */
+
+.okno-editor .okno-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 34px;
+	padding: 0 16px;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	background: var(--okno-accent);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.okno-editor .okno-btn:hover:not(:disabled) {
+	background: var(--okno-accent-hover);
+	color: #fff;
+}
+
+.okno-editor .okno-btn--quiet {
+	background: var(--okno-bg);
+	border-color: var(--okno-line-strong);
+	color: var(--okno-ink);
+}
+
+.okno-editor .okno-btn--quiet:hover:not(:disabled) {
+	background: var(--okno-surface);
+	color: var(--okno-ink);
+}
+
+.okno-editor .okno-btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.okno-icon-btn {
+	display: grid;
+	place-items: center;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--okno-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.okno-icon-btn:hover:not(:disabled) {
+	background: var(--okno-surface);
+	color: var(--okno-ink);
+}
+
+.okno-icon-btn:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+/* ── Barre du haut ─────────────────────────────────────────────────── */
+
+.okno-toolbar {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) auto minmax( 0, 1fr );
+	align-items: center;
+	gap: 16px;
+	flex: 0 0 56px;
+	height: 56px;
+	padding: 0 12px;
+	background: var(--okno-bg);
+	border-bottom: 1px solid var(--okno-line);
+}
+
+.okno-toolbar-start,
+.okno-toolbar-end {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.okno-toolbar-end {
+	justify-content: flex-end;
+}
+
+.okno-exit {
+	display: grid;
+	place-items: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	color: var(--okno-muted);
+	text-decoration: none;
+}
+
+.okno-exit:hover {
+	background: var(--okno-surface);
+	color: var(--okno-ink);
+}
+
+.okno-mark {
+	display: block;
+	flex: 0 0 auto;
+	width: 22px;
+	height: 22px;
+	margin-right: 4px;
+}
+
+.okno-doc {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.25;
+}
+
+.okno-current-title {
+	overflow: hidden;
+	color: var(--okno-ink);
+	font-size: 13.5px;
+	font-weight: 650;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.okno-save-state {
+	overflow: hidden;
+	color: var(--okno-faint);
+	font-size: 11.5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.okno-save-state.is-dirty {
+	color: var(--okno-warn);
+}
+
+.okno-save-state.is-dirty::before {
+	content: "";
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	margin: 0 6px 1px 0;
+	border-radius: 50%;
+	background: currentColor;
+	vertical-align: middle;
+}
+
+.okno-viewport-toggle {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border: 1px solid var(--okno-line);
+	border-radius: 9px;
+	background: var(--okno-surface);
+}
+
+.okno-vw {
+	display: grid;
+	place-items: center;
+	width: 34px;
+	height: 28px;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--okno-muted);
+	cursor: pointer;
+}
+
+.okno-vw:hover {
+	color: var(--okno-ink);
+}
+
+.okno-vw.active {
+	background: var(--okno-bg);
+	color: var(--okno-accent);
+	box-shadow: 0 1px 2px rgba( 16, 17, 22, 0.1 );
+}
+
+.okno-history {
+	display: inline-flex;
+	gap: 2px;
+}
+
+/* Bannière de mise en ligne. */
+.okno-deploy-banner {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	max-width: 280px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: var(--okno-accent-soft);
+	color: var(--okno-accent);
+	font-size: 12px;
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.okno-deploy-banner a {
+	color: inherit;
+}
+
+.okno-deploy-success,
+.okno-deploy-triggered {
+	background: var(--okno-ok-soft);
+	color: var(--okno-ok);
+}
+
+.okno-deploy-error {
+	background: var(--okno-error-soft);
+	color: var(--okno-error);
+	white-space: normal;
+}
+
+/* ── Disposition ───────────────────────────────────────────────────── */
+
+.okno-main {
+	display: flex;
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.okno-sidebar {
+	display: flex;
+	flex-direction: column;
+	flex: 0 0 272px;
+	width: 272px;
+	min-height: 0;
+	background: var(--okno-bg);
+	border-right: 1px solid var(--okno-line);
+}
+
+.okno-stage {
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 16px;
+}
+
+.okno-panel {
+	flex: 0 0 340px;
+	width: 340px;
+	min-height: 0;
+	overflow-y: auto;
+	background: var(--okno-bg);
+	border-left: 1px solid var(--okno-line);
+}
+
+/* ── Barre latérale ────────────────────────────────────────────────── */
+
+.okno-sidebar-tabs {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 2px;
+	margin: 12px 12px 4px;
+	padding: 3px;
+	border: 1px solid var(--okno-line);
+	border-radius: 9px;
+	background: var(--okno-surface);
+}
+
+.okno-sidebar-tab {
+	display: flex;
+	letter-spacing: -0.01em;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-width: 0;
+	height: 30px;
+	padding: 0 6px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--okno-muted);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.okno-sidebar-tab span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.okno-sidebar-tab:hover:not(:disabled) {
+	color: var(--okno-ink);
+}
+
+.okno-sidebar-tab.active {
+	background: var(--okno-bg);
+	color: var(--okno-ink);
+	box-shadow: 0 1px 2px rgba( 16, 17, 22, 0.1 );
+}
+
+.okno-sidebar-tab:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.okno-sidebar-body {
+	flex: 1 1 auto;
+	min-height: 0;
+	padding: 8px 8px 16px;
+	overflow-y: auto;
+}
+
+.okno-pages-search {
+	display: block;
+	width: 100%;
+	height: 34px;
+	margin: 4px 0 8px;
+	padding: 0 12px;
+	border: 1px solid var(--okno-line-strong);
+	border-radius: 8px;
+	background: var(--okno-bg);
+	color: var(--okno-ink);
+	font-size: 13px;
+}
+
+.okno-pages-search:focus {
+	border-color: var(--okno-accent);
+	box-shadow: 0 0 0 3px var(--okno-accent-soft);
+	outline: none;
+}
+
+/* Arbre : dossiers, pages, sections. */
+.okno-tree-folder,
+.okno-page-item,
+.okno-tree-node {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	min-height: 32px;
+	padding: 6px 8px;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--okno-body);
+	font-size: 13px;
+	text-align: left;
+	cursor: pointer;
+}
+
+.okno-tree-folder {
+	color: var(--okno-ink);
+	font-weight: 600;
+}
+
+.okno-tree-folder:hover,
+.okno-page-item:hover,
+.okno-tree-node:hover {
+	background: var(--okno-surface);
+}
+
+.okno-page-item.active,
+.okno-tree-node.active {
+	background: var(--okno-accent-soft);
+	color: var(--okno-accent);
+	font-weight: 600;
+}
+
+.okno-tree-folder .okno-icon,
+.okno-page-item .okno-icon,
+.okno-tree-node .okno-icon {
+	color: var(--okno-faint);
+}
+
+.okno-page-item.active .okno-icon,
+.okno-tree-node.active .okno-icon {
+	color: var(--okno-accent);
+}
+
+.okno-tree-chevron {
+	transition: transform 0.15s ease;
+}
+
+.okno-tree-chevron.open {
+	transform: rotate( 90deg );
+}
+
+.okno-tree-label,
+.okno-page-item-title {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.okno-page-item-status {
+	flex: 0 0 auto;
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: var(--okno-warn-soft);
+	color: var(--okno-warn);
+	font-size: 10.5px;
+	font-weight: 600;
+}
+
+.okno-tree-count {
+	flex: 0 0 auto;
+	min-width: 20px;
+	padding: 1px 6px;
+	border-radius: 999px;
+	background: var(--okno-surface);
+	color: var(--okno-muted);
+	font-size: 10.5px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.okno-tree-node.active .okno-tree-count {
+	background: var(--okno-bg);
+	color: var(--okno-accent);
+}
+
+/* Actions au survol, sans recouvrir le libellé. */
+.okno-page-row,
+.okno-tree-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.okno-page-row .okno-page-item,
+.okno-tree-row .okno-tree-node {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.okno-page-actions,
+.okno-tree-actions {
+	position: absolute;
+	top: 50%;
+	right: 4px;
+	display: inline-flex;
+	gap: 2px;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY( -50% );
+	transition: opacity 0.12s ease;
+}
+
+.okno-page-row:hover .okno-page-actions,
+.okno-page-row:focus-within .okno-page-actions,
+.okno-tree-row:hover .okno-tree-actions,
+.okno-tree-row:focus-within .okno-tree-actions {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.okno-page-row:hover .okno-page-item,
+.okno-page-row:focus-within .okno-page-item {
+	padding-right: 56px;
+}
+
+.okno-tree-row:hover .okno-tree-node,
+.okno-tree-row:focus-within .okno-tree-node {
+	padding-right: 100px;
+}
+
+.okno-page-action,
+.okno-tree-action {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	border: 0;
+	border-radius: 5px;
+	background: transparent;
+	color: var(--okno-muted);
+	font-size: 12px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.okno-page-action:hover,
+.okno-tree-action:hover:not(:disabled) {
+	background: var(--okno-bg);
+	color: var(--okno-ink);
+	box-shadow: 0 0 0 1px var(--okno-line);
+}
+
+.okno-page-action-danger:hover {
+	color: var(--okno-error);
+}
+
+.okno-tree-action:disabled {
+	opacity: 0.3;
+	cursor: default;
+}
+
+.okno-tree-hint {
+	margin: 8px;
+	color: var(--okno-muted);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.okno-pages-more {
+	width: 100%;
+	margin-top: 8px;
+}
+
+/* Création de contenu. */
+.okno-pages-create {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--okno-line);
+}
+
+.okno-pages-create .okno-create-toggle {
+	width: 100%;
+}
+
+.okno-create-form {
+	display: grid;
+	gap: 6px;
+	margin-top: 10px;
+	padding: 12px;
+	border: 1px solid var(--okno-line);
+	border-radius: 8px;
+	background: var(--okno-surface);
+}
+
+.okno-create-form label {
+	color: var(--okno-muted);
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+/* Ajout de section (flexible content). */
+.okno-add-section {
+	display: grid;
+	gap: 6px;
+	margin: 12px 4px 0;
+	padding-top: 12px;
+	border-top: 1px solid var(--okno-line);
+	color: var(--okno-muted);
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+.okno-add-section-row {
+	display: flex;
+	gap: 6px;
+}
+
+.okno-add-section-row select {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* Historique de la page. */
+.okno-timeline {
+	margin: 4px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.okno-timeline-item {
+	padding: 10px 8px;
+	border-bottom: 1px solid var(--okno-line);
+}
+
+.okno-timeline-item:last-child {
+	border-bottom: 0;
+}
+
+.okno-timeline-field {
+	display: block;
+	max-width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--okno-ink);
+	font-size: 12.5px;
+	font-weight: 650;
+	text-align: left;
+	cursor: pointer;
+}
+
+.okno-timeline-field:hover {
+	color: var(--okno-accent);
+}
+
+.okno-timeline-meta {
+	display: block;
+	margin-top: 1px;
+	color: var(--okno-faint);
+	font-size: 11px;
+}
+
+.okno-timeline-change {
+	display: grid;
+	gap: 3px;
+	margin-top: 6px;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.okno-timeline-change del,
+.okno-timeline-change ins {
+	display: block;
+	padding: 4px 7px;
+	border-radius: 6px;
+	text-decoration: none;
+	overflow-wrap: anywhere;
+}
+
+.okno-timeline-change del {
+	background: var(--okno-surface);
+	color: var(--okno-muted);
+}
+
+.okno-timeline-change ins {
+	background: var(--okno-accent-soft);
+	color: var(--okno-ink);
+}
+
+/* ── Aperçu ────────────────────────────────────────────────────────── */
+
+.okno-frame-wrap {
+	position: relative;
+	flex: 1 1 auto;
+	width: 100%;
+	margin: 0 auto;
+	overflow: hidden;
+	border-radius: var(--okno-radius);
+	background: #fff;
+	box-shadow: var(--okno-shadow);
+	transition: max-width 0.25s ease;
+}
+
+.okno-frame-wrap.okno-frame-device {
+	border: 1px solid var(--okno-line-strong);
+}
+
+.okno-frame-wrap.okno-frame-phone {
+	border-radius: 22px;
+}
+
+#okno-frame {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background: #fff;
+}
+
+.okno-frame-placeholder {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	background: var(--okno-bg);
+	color: var(--okno-muted);
+	font-size: 14px;
+}
+
+.okno-frame-placeholder img {
+	opacity: 0.8;
+}
+
+.okno-frame-help {
+	position: absolute;
+	inset: 0;
+	padding: 48px;
+	overflow-y: auto;
+	background: var(--okno-bg);
+	color: var(--okno-body);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.okno-frame-help h2 {
+	margin: 0 0 8px;
+	color: var(--okno-ink);
+	font-size: 18px;
+}
+
+.okno-frame-help ol {
+	margin: 16px 0 24px;
+	padding-left: 20px;
+}
+
+.okno-frame-help li {
+	margin-bottom: 8px;
+}
+
+/* ── Inspecteur ────────────────────────────────────────────────────── */
+
+.okno-panel-empty {
+	margin: 32px 24px;
+	color: var(--okno-muted);
+	font-size: 13px;
+	line-height: 1.6;
+	text-align: center;
+}
+
+.okno-inspector-head {
+	padding: 18px 20px 14px;
+	border-bottom: 1px solid var(--okno-line);
+}
+
+.okno-inspector-head h2 {
+	margin: 0;
+	color: var(--okno-ink);
+	font-size: 15px;
+	font-weight: 650;
+	line-height: 1.3;
+}
+
+.okno-inspector-head p {
+	margin: 2px 0 0;
+	color: var(--okno-muted);
+	font-size: 12px;
+}
+
+.okno-group {
+	padding: 16px 20px 8px;
+	border-bottom: 1px solid var(--okno-line);
+}
+
+.okno-group > h3 {
+	margin: 0 0 12px;
+	color: var(--okno-faint);
+	font-size: 10.5px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.okno-field {
+	margin-bottom: 18px;
+	border-radius: 8px;
+	transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.okno-field-flash {
+	background: var(--okno-accent-soft);
+	box-shadow: 0 0 0 6px var(--okno-accent-soft);
+}
+
+.okno-field-label {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 6px;
+}
+
+.okno-field-chip {
+	color: var(--okno-ink);
+	font-size: 12.5px;
+	font-weight: 600;
+}
+
+.okno-field-badge {
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: var(--okno-surface);
+	color: var(--okno-faint);
+	font-size: 10.5px;
+	font-weight: 500;
+}
+
+.okno-field-note {
+	margin: 6px 0 0;
+	color: var(--okno-muted);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.okno-field-unsupported .okno-field-note a {
+	color: var(--okno-accent);
+}
+
+.okno-crop-note {
+	padding: 7px 10px;
+	border-radius: 7px;
+	background: var(--okno-warn-soft);
+	color: var(--okno-warn);
+}
+
+.okno-field--error {
+	padding: 10px 12px;
+	margin-left: -12px;
+	margin-right: -12px;
+	border-radius: 8px;
+	background: var(--okno-error-soft, #fdecea);
+}
+
+.okno-field-error {
+	margin: 6px 0 0;
+	color: var(--okno-error);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* Contrôles de saisie. */
+.okno-panel input[type="text"],
+.okno-panel input[type="url"],
+.okno-panel input[type="email"],
+.okno-panel input[type="number"],
+.okno-panel input[type="date"],
+.okno-panel input[type="datetime-local"],
+.okno-panel input[type="time"],
+.okno-panel textarea,
+.okno-panel select,
+.okno-sidebar select,
+.okno-create-form input {
+	display: block;
+	width: 100%;
+	min-height: 36px;
+	margin: 0;
+	padding: 7px 11px;
+	border: 1px solid var(--okno-line-strong);
+	border-radius: 8px;
+	background: var(--okno-bg);
+	color: var(--okno-ink);
+	font-family: inherit;
+	font-size: 13.5px;
+	line-height: 1.45;
+	box-shadow: none;
+}
+
+.okno-panel textarea {
+	resize: vertical;
+}
+
+.okno-panel select:not([multiple]),
+.okno-sidebar select {
+	padding-right: 32px;
+	background: var(--okno-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c6f7b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center / 14px;
+	-webkit-appearance: none;
+	appearance: none;
+	cursor: pointer;
+}
+
+.okno-panel select[multiple] {
+	padding: 4px;
+}
+
+.okno-panel input:focus,
+.okno-panel textarea:focus,
+.okno-panel select:focus,
+.okno-sidebar select:focus,
+.okno-create-form input:focus {
+	border-color: var(--okno-accent);
+	box-shadow: 0 0 0 3px var(--okno-accent-soft);
+	outline: none;
+}
+
+.okno-panel input[type="range"] {
+	width: 100%;
+	accent-color: var(--okno-accent);
+}
+
+.okno-counted {
+	position: relative;
+}
+
+.okno-counted input,
+.okno-counted textarea {
+	padding-right: 64px;
+}
+
+.okno-counter {
+	position: absolute;
+	top: 9px;
+	right: 10px;
+	color: var(--okno-faint);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	pointer-events: none;
+}
+
+.okno-counter.is-near {
+	color: var(--okno-warn);
+	font-weight: 600;
+}
+
+.okno-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--okno-body);
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.okno-toggle input {
+	accent-color: var(--okno-accent);
+}
+
+/* Images, fichiers, galerie. */
+.okno-image-field {
+	padding: 10px;
+	border: 1px dashed var(--okno-line-strong);
+	border-radius: 8px;
+	background: var(--okno-surface);
+}
+
+.okno-image-preview {
+	display: block;
+	width: 100%;
+	max-height: 160px;
+	margin-bottom: 10px;
+	border-radius: 6px;
+	object-fit: cover;
+	background: var(--okno-canvas);
+}
+
+.okno-image-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.okno-image-actions .button {
+	min-height: 32px;
+	border-radius: 7px;
+}
+
+.okno-image-remove {
+	border: 0;
+	background: none;
+	color: var(--okno-error);
+	font-size: 12.5px;
+	cursor: pointer;
+}
+
+.okno-file-name {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--okno-body);
+	font-size: 12.5px;
+	word-break: break-all;
+}
+
+.okno-gallery-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 6px;
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+}
+
+.okno-gallery-item {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--okno-line);
+	border-radius: 7px;
+	background: var(--okno-surface);
+}
+
+.okno-gallery-item img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+}
+
+.okno-gallery-actions {
+	display: flex;
+	justify-content: center;
+	gap: 2px;
+	padding: 3px;
+}
+
+/* Lien, relations, groupes. */
+.okno-link-field {
+	display: grid;
+	gap: 6px;
+}
+
+.okno-group-field {
+	padding: 12px;
+	border: 1px solid var(--okno-line);
+	border-radius: 9px;
+	background: var(--okno-surface);
+}
+
+.okno-subfield {
+	margin-bottom: 12px;
+}
+
+.okno-subfield:last-child {
+	margin-bottom: 0;
+}
+
+.okno-subfield-label {
+	display: block;
+	margin-bottom: 5px;
+	color: var(--okno-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* Repeater et flexible content. */
+.okno-repeater-row {
+	margin-bottom: 8px;
+	padding: 12px;
+	border: 1px solid var(--okno-line);
+	border-radius: 9px;
+	background: var(--okno-bg);
+}
+
+.okno-group-field .okno-repeater-row {
+	background: var(--okno-bg);
+}
+
+.okno-repeater-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.okno-repeater-title {
+	color: var(--okno-ink);
+	font-size: 12px;
+	font-weight: 650;
+}
+
+.okno-repeater-actions {
+	display: inline-flex;
+	gap: 2px;
+}
+
+.okno-repeater-btn {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 1px solid var(--okno-line);
+	border-radius: 6px;
+	background: var(--okno-bg);
+	color: var(--okno-muted);
+	font-size: 12px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.okno-repeater-btn:hover:not(:disabled) {
+	border-color: var(--okno-line-strong);
+	color: var(--okno-ink);
+}
+
+.okno-repeater-btn:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.okno-repeater-add {
+	width: 100%;
+}
+
+.okno-editor .okno-repeater-add {
+	min-height: 32px;
+	border: 1px dashed var(--okno-line-strong);
+	border-radius: 8px;
+	background: transparent;
+	color: var(--okno-muted);
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.okno-editor .okno-repeater-add:hover:not(:disabled) {
+	border-color: var(--okno-accent);
+	color: var(--okno-accent);
+}
+
+.okno-flex-add {
+	display: flex;
+	gap: 6px;
+}
+
+.okno-flex-add select {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.okno-flex-add .okno-repeater-add {
+	width: auto;
+	padding: 0 12px;
+	white-space: nowrap;
+}
+
+.okno-repeater-expand {
+	margin-top: 6px;
+	border: 0;
+	background: none;
+	color: var(--okno-accent);
+	font-size: 12px;
+	cursor: pointer;
+}
+
+/* Contenu géré ailleurs. */
+.okno-managed {
+	margin: 24px 20px;
+	padding: 20px;
+	border: 1px dashed #d6b35c;
+	border-radius: var(--okno-radius);
+	background: var(--okno-warn-soft);
+}
+
+.okno-managed h2 {
+	margin: 0 0 6px;
+	color: var(--okno-ink);
+	font-size: 14px;
+}
+
+.okno-managed p {
+	margin: 0 0 14px;
+	color: var(--okno-body);
+	font-size: 12.5px;
+	line-height: 1.55;
+}
+
+/* ── Notifications ─────────────────────────────────────────────────── */
+
+.okno-toast {
+	position: fixed;
+	bottom: 24px;
+	left: 50%;
+	z-index: 1000001;
+	max-width: min( 520px, calc( 100vw - 32px ) );
+	padding: 11px 16px;
+	border-radius: 10px;
+	background: #1c1d22;
+	color: #fff;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 13px;
+	line-height: 1.45;
+	box-shadow: 0 10px 30px rgba( 0, 0, 0, 0.25 );
+	opacity: 0;
+	transform: translate( -50%, 8px );
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.okno-toast-visible {
+	opacity: 1;
+	transform: translate( -50%, 0 );
+}
+
+.okno-toast-error {
+	background: #b42318;
+}
+
+/* ── Premier lancement (site non connecté) ─────────────────────────── */
+
+.okno-editor-setup {
+	max-width: 520px;
+	margin: 80px auto;
+	padding: 40px;
+	border: 1px solid #e3e4e8;
+	border-radius: 12px;
+	background: #fff;
+	color: #42444d;
+	font-size: 14px;
+	line-height: 1.6;
+	text-align: center;
+}
+
+.okno-editor-setup img {
+	display: block;
+	margin: 0 auto 16px;
+}
+
+.okno-editor-setup h1 {
+	margin: 0 0 8px;
+	color: #1c1d22;
+	font-size: 18px;
+	line-height: 1.35;
+}
+
+.okno-editor-setup .okno-setup-btn {
+	display: inline-flex;
+	align-items: center;
+	min-height: 38px;
+	margin-top: 12px;
+	padding: 0 18px;
+	border-radius: 8px;
+	background: #5b5bd6;
+	color: #fff;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+/* ── Médiathèque et fenêtres TinyMCE au-dessus du plein écran ──────── */
+
+html.okno-fullscreen .media-modal,
+html.okno-fullscreen .media-modal-backdrop,
+html.okno-fullscreen #wp-link-wrap,
+html.okno-fullscreen #wp-link-backdrop,
+html.okno-fullscreen .mce-window,
+html.okno-fullscreen #mce-modal-block {
+	z-index: 1000000 !important;
+}
+
+/* ── Écrans étroits ────────────────────────────────────────────────── */
+
+@media ( max-width: 1180px ) {
+	.okno-sidebar {
+		flex-basis: 232px;
+		width: 232px;
+	}
+
+	.okno-panel {
+		flex-basis: 300px;
+		width: 300px;
+	}
+
+	.okno-toolbar-center {
+		display: none;
+	}
+
+	.okno-toolbar {
+		grid-template-columns: minmax( 0, 1fr ) auto;
+	}
+}

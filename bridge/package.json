@@ -1,0 +1,56 @@
+{
+	"name": "@pixelersagency/okno-bridge",
+	"version": "1.0.0-beta.1",
+	"description": "Pont postMessage de l'éditeur visuel Okno : rend n'importe quel site (React, Next.js, Remix, Vite, Nuxt, SvelteKit, Astro, HTML) éditable depuis WordPress. Zéro dépendance, inactif hors de l'éditeur.",
+	"keywords": [
+		"wordpress",
+		"headless",
+		"acf",
+		"visual-editing",
+		"react",
+		"nextjs",
+		"astro",
+		"remix",
+		"vite",
+		"nuxt",
+		"sveltekit"
+	],
+	"license": "GPL-2.0-or-later",
+	"author": "Pixelers (https://pixelers.fr)",
+	"type": "module",
+	"main": "./dist/okno-bridge.js",
+	"module": "./src/index.js",
+	"exports": {
+		".": {
+			"import": "./src/index.js",
+			"default": "./dist/okno-bridge.js"
+		},
+		"./react": {
+			"import": "./src/react.js"
+		},
+		"./standalone": "./dist/okno-bridge.js"
+	},
+	"scripts": {
+		"build": "node build.js"
+	},
+	"files": [
+		"src",
+		"dist",
+		"README.md"
+	],
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pixelersagency/okno.git",
+		"directory": "bridge"
+	},
+	"homepage": "https://github.com/pixelersagency/okno#readme",
+	"peerDependencies": {
+		"react": ">=17"
+	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		}
+	}
+}

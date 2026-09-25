@@ -1,0 +1,16 @@
+# Build output
+/dist/
+*.zip
+
+# Private notes, specs and client material: never published
+/_internal/
+
+# Dependencies
+node_modules/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
