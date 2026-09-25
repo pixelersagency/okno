@@ -48,15 +48,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PRERELEASE=""
-          case "$VERSION" in *-*) PRERELEASE="--prerelease" ;; esac
-          # Relancer le workflow sur un tag déjà publié remplace le zip au
-          # lieu d'échouer (utile si seule la publication npm avait raté).
+          # Deux fichiers identiques : okno-<version>.zip pour l'archive, et
+          # okno.zip pour un lien de téléchargement stable :
+          # https://github.com/<repo>/releases/latest/download/okno.zip
+          cp "dist/okno-$VERSION.zip" dist/okno.zip
+          # Toute version est marquée « latest » (bêta comprise) : une
+          # pré-release est exclue de /releases/latest, le lien casserait.
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" --clobber
+            gh release upload "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" dist/okno.zip --clobber
           else
-            gh release create "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" \
-              --title "Okno $VERSION" --notes-file notes.md $PRERELEASE
+            gh release create "$GITHUB_REF_NAME" "dist/okno-$VERSION.zip" dist/okno.zip \
+              --title "Okno $VERSION" --notes-file notes.md --latest
           fi
 
       - name: Publish bridge to npm
@@ -65,7 +67,6 @@ jobs:
           # Trusted Publishing needs npm 11.5.1 or later.
           npm install -g npm@latest
           TAG=latest
-          case "$VERSION" in *-*) TAG=next ;; esac
           if npm view "$(node -p "require('./package.json').name")@$VERSION" version > /dev/null 2>&1; then
             echo "Already on npm, skipping."
             exit 0

@@ -4,7 +4,7 @@ Tags: headless, acf, visual editor, nextjs, astro
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0-beta.1
+Stable tag: 1.0.0-beta.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,9 @@ No. Everything is saved to your existing ACF fields and post data.
 Okno removes its own settings, tokens, history table and internal post meta. Your content and ACF fields are left untouched.
 
 == Changelog ==
+
+= 1.0.0-beta.2 =
+* New visual identity in Pixelers colours.
 
 = 1.0.0-beta.1 =
 * First public release. See CHANGELOG.md on GitHub for details.

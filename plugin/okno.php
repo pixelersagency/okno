@@ -3,7 +3,7 @@
  * Plugin Name:       Okno
  * Plugin URI:        https://github.com/pixelersagency/okno
  * Description:       Éditeur visuel pour fronts headless (Astro, Next.js, …) directement dans wp-admin. Les champs ACF existants sont la source de vérité.
- * Version:           1.0.0-beta.1
+ * Version:           1.0.0-beta.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Pixelers
@@ -23,7 +23,7 @@ if ( defined( 'OKNO_VERSION' ) ) {
 	return;
 }
 
-define( 'OKNO_VERSION', '1.0.0-beta.1' );
+define( 'OKNO_VERSION', '1.0.0-beta.2' );
 define( 'OKNO_FILE', __FILE__ );
 define( 'OKNO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OKNO_URL', plugin_dir_url( __FILE__ ) );
