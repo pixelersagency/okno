@@ -24,6 +24,7 @@ Thanks for helping. Bug reports, framework recipes and pull requests are all wel
 php plugin/tests/test-acf-adapter.php
 php plugin/tests/test-activity.php
 php plugin/tests/test-frame-verdict.php
+php plugin/tests/test-updater.php
 php plugin/tests/smoke-load.php
 
 # After changing bridge/src

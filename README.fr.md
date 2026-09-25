@@ -23,7 +23,7 @@ Le headless donne aux développeurs un front moderne, mais retire aux rédacteur
 
 ### 1. Installer le plugin
 
-[Téléchargez `okno.zip`](https://github.com/pixelersagency/okno/releases/latest/download/okno.zip) (dernière version, aussi listée sur la [page des versions](https://github.com/pixelersagency/okno/releases)) et téléversez-le dans **Extensions → Ajouter → Téléverser**. Nécessite WordPress 6.0+, PHP 7.4+ et [ACF](https://www.advancedcustomfields.com/) (gratuit ou Pro). Sans ACF, seuls le titre et l'image mise en avant sont modifiables.
+[Téléchargez `okno.zip`](https://github.com/pixelersagency/okno/releases/latest/download/okno.zip) (dernière version, aussi listée sur la [page des versions](https://github.com/pixelersagency/okno/releases)) et téléversez-le dans **Extensions → Ajouter → Téléverser**. Les versions suivantes apparaissent dans **Extensions** comme n’importe quelle mise à jour. Nécessite WordPress 6.0+, PHP 7.4+ et [ACF](https://www.advancedcustomfields.com/) (gratuit ou Pro). Sans ACF, seuls le titre et l'image mise en avant sont modifiables.
 
 ### 2. Le relier au site
 

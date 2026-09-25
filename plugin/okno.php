@@ -3,13 +3,15 @@
  * Plugin Name:       Okno
  * Plugin URI:        https://github.com/pixelersagency/okno
  * Description:       Visual editor for headless front ends (Astro, Next.js, …), right inside wp-admin. Your existing ACF fields stay the source of truth.
- * Version:           1.0.0-beta.3
+ * Version:           1.0.0-beta.4
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Pixelers
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       okno
+ * Domain Path:       /languages
+ * Update URI:        https://github.com/pixelersagency/okno
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -23,7 +25,7 @@ if ( defined( 'OKNO_VERSION' ) ) {
 	return;
 }
 
-define( 'OKNO_VERSION', '1.0.0-beta.3' );
+define( 'OKNO_VERSION', '1.0.0-beta.4' );
 define( 'OKNO_FILE', __FILE__ );
 define( 'OKNO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OKNO_URL', plugin_dir_url( __FILE__ ) );
@@ -42,6 +44,7 @@ require_once OKNO_DIR . 'includes/class-okno-url-mapper.php';
 require_once OKNO_DIR . 'includes/class-okno-activity.php';
 require_once OKNO_DIR . 'includes/class-okno-schema.php';
 require_once OKNO_DIR . 'includes/class-okno-rest.php';
+require_once OKNO_DIR . 'includes/class-okno-updater.php';
 require_once OKNO_DIR . 'includes/admin/class-okno-icons.php';
 require_once OKNO_DIR . 'includes/admin/class-okno-dashboard.php';
 require_once OKNO_DIR . 'includes/admin/class-okno-admin.php';
@@ -90,6 +93,7 @@ final class Okno_Plugin {
 		add_action( 'rest_api_init', array( new Okno_Rest( $this ), 'register_routes' ) );
 		add_action( Okno_Deploy_Manager::CRON_HOOK, array( 'Okno_Deploy_Manager', 'cleanup_stale' ) );
 		Okno_Activity::init();
+		Okno_Updater::init();
 
 		if ( is_admin() ) {
 			new Okno_Admin( $this );

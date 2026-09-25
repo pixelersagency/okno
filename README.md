@@ -45,7 +45,7 @@ Headless WordPress gives developers a modern front end, but it takes the "what y
 
 ### 1. Install the plugin
 
-[Download `okno.zip`](https://github.com/pixelersagency/okno/releases/latest/download/okno.zip) (latest version, also listed on the [releases page](https://github.com/pixelersagency/okno/releases)) and upload it in **Plugins → Add New → Upload Plugin**. Requires WordPress 6.0+, PHP 7.4+ and [ACF](https://www.advancedcustomfields.com/) (free or Pro). Without ACF, only the title and featured image are editable.
+[Download `okno.zip`](https://github.com/pixelersagency/okno/releases/latest/download/okno.zip) (latest version, also listed on the [releases page](https://github.com/pixelersagency/okno/releases)) and upload it in **Plugins → Add New → Upload Plugin**. Later versions show up in **Plugins** like any other update. Requires WordPress 6.0+, PHP 7.4+ and [ACF](https://www.advancedcustomfields.com/) (free or Pro). Without ACF, only the title and featured image are editable.
 
 ### 2. Point it at your site
 
@@ -184,6 +184,7 @@ scripts/    Release packaging
 php plugin/tests/test-acf-adapter.php
 php plugin/tests/test-activity.php
 php plugin/tests/test-frame-verdict.php
+php plugin/tests/test-updater.php
 php plugin/tests/smoke-load.php
 
 # Rebuild the bridge (also copies it into the plugin)

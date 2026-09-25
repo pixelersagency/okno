@@ -1497,6 +1497,18 @@ msgstr "Contenu principal"
 msgid "Featured image"
 msgstr "Image mise en avant"
 
+#: includes/class-okno-updater.php:157
+msgid "Visual editing for headless WordPress: edit your ACF fields live on your real front end, from wp-admin."
+msgstr "L’édition visuelle pour WordPress headless : modifiez vos champs ACF en direct sur votre vrai site, depuis wp-admin."
+
+#: includes/class-okno-updater.php:159
+msgid "Release notes on GitHub"
+msgstr "Notes de version sur GitHub"
+
+#: includes/class-okno-updater.php:226
+msgid "Couldn’t prepare the Okno update folder."
+msgstr "Impossible de préparer le dossier de mise à jour d’Okno."
+
 #: includes/deploy/class-okno-build-hook-driver.php:21
 msgid "No build hook URL set."
 msgstr "Aucune URL de build hook configurée."
@@ -1699,3 +1711,8 @@ msgstr[1] "Le PAT expire le %1$s (dans %2$d jours)."
 #: includes/deploy/class-okno-github-preflight.php:166
 msgid "PAT valid until %s."
 msgstr "PAT valide jusqu’au %s."
+
+#. Description of the plugin
+#: okno.php
+msgid "Visual editor for headless front ends (Astro, Next.js, …), right inside wp-admin. Your existing ACF fields stay the source of truth."
+msgstr "Éditeur visuel pour fronts headless (Astro, Next.js, …) directement dans wp-admin. Les champs ACF existants sont la source de vérité."

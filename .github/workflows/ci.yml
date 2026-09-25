@@ -29,6 +29,7 @@ jobs:
           php plugin/tests/test-acf-adapter.php
           php plugin/tests/test-activity.php
           php plugin/tests/test-frame-verdict.php
+          php plugin/tests/test-updater.php
           php plugin/tests/smoke-load.php
 
   bridge:

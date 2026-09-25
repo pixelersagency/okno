@@ -170,6 +170,14 @@ def main():
     extract(php_files(), 'PHP', PHP_KEYWORDS, pot)
     extract(JS_FILES, 'JavaScript', JS_KEYWORDS, pot, join=True)
 
+    # En-tête du plugin : WordPress traduit la description de la liste des
+    # extensions avec le même domaine, mais xgettext ne la voit pas.
+    with open(os.path.join(PLUGIN, 'okno.php'), encoding='utf-8') as fh:
+        m = re.search(r'^ \* Description:\s*(.+)$', fh.read(), re.M)
+    if m:
+        with open(pot, 'a', encoding='utf-8') as fh:
+            fh.write('\n#. Description of the plugin\n#: okno.php\nmsgid "%s"\nmsgstr ""\n' % po_escape(m.group(1).strip()))
+
     # Horodatage stable : sans ça, chaque exécution modifierait le .pot.
     with open(pot, encoding='utf-8') as fh:
         content = fh.read()
