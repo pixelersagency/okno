@@ -39,43 +39,47 @@ body > .screen-reader-text[role="status"] {
 
 .okno-editor {
 	--okno-bg: #ffffff;
-	--okno-surface: #f6f6f8;
-	--okno-canvas: #ececf0;
-	--okno-line: #e3e4e8;
-	--okno-line-strong: #d3d4da;
-	--okno-ink: #1c1d22;
-	--okno-body: #42444d;
-	--okno-muted: #6c6f7b;
-	--okno-faint: #9a9da8;
-	--okno-accent: #5b5bd6;
-	--okno-accent-hover: #4a4ac4;
-	--okno-accent-soft: #eeeefb;
-	--okno-accent-line: #cfcff4;
+	--okno-surface: #f5f5f5;
+	--okno-canvas: #ebebeb;
+	--okno-line: #e5e5e5;
+	--okno-line-strong: #d4d4d4;
+	--okno-ink: #0a0a0a;
+	--okno-body: #404040;
+	--okno-muted: #525252;
+	--okno-faint: #8a8a8a;
+	--okno-accent: #c5ff3e;
+	--okno-accent-hover: #b4f01f;
+	--okno-accent-ink: #3d6b00;
+	--okno-on-accent: #0a0a0a;
+	--okno-accent-soft: #f1fdd4;
+	--okno-accent-line: #86c400;
 	--okno-ok: #1a7f4b;
 	--okno-ok-soft: #e7f5ee;
 	--okno-warn: #8a5a00;
 	--okno-warn-soft: #fdf3dc;
 	--okno-error: #b42318;
 	--okno-error-soft: #fdecea;
-	--okno-shadow: 0 1px 2px rgba( 16, 17, 22, 0.06 ), 0 8px 28px rgba( 16, 17, 22, 0.08 );
+	--okno-shadow: 0 1px 2px rgba( 10, 10, 10, 0.06 ), 0 8px 28px rgba( 10, 10, 10, 0.08 );
 	--okno-radius: 10px;
 	color-scheme: light;
 }
 
 .okno-editor[data-theme='dark'] {
-	--okno-bg: #1b1c21;
-	--okno-surface: #23242b;
-	--okno-canvas: #121317;
-	--okno-line: #2e3038;
-	--okno-line-strong: #3b3d47;
-	--okno-ink: #ecedf2;
-	--okno-body: #c4c6d0;
-	--okno-muted: #969aa8;
-	--okno-faint: #6f7280;
-	--okno-accent: #8b8bf5;
-	--okno-accent-hover: #a0a0f7;
-	--okno-accent-soft: rgba( 139, 139, 245, 0.14 );
-	--okno-accent-line: rgba( 139, 139, 245, 0.35 );
+	--okno-bg: #161616;
+	--okno-surface: #1f1f1f;
+	--okno-canvas: #0a0a0a;
+	--okno-line: #2a2a2a;
+	--okno-line-strong: #3a3a3a;
+	--okno-ink: #f5f5f5;
+	--okno-body: #cfcfcf;
+	--okno-muted: #a3a3a3;
+	--okno-faint: #737373;
+	--okno-accent: #c5ff3e;
+	--okno-accent-hover: #d4ff6b;
+	--okno-accent-ink: #c5ff3e;
+	--okno-on-accent: #0a0a0a;
+	--okno-accent-soft: rgba( 197, 255, 62, 0.12 );
+	--okno-accent-line: rgba( 197, 255, 62, 0.35 );
 	--okno-ok: #6fd39a;
 	--okno-ok-soft: rgba( 70, 190, 120, 0.14 );
 	--okno-warn: #e8c268;
@@ -112,7 +116,7 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-editor :focus-visible {
-	outline: 2px solid var(--okno-accent);
+	outline: 2px solid var(--okno-accent-ink);
 	outline-offset: 2px;
 }
 
@@ -133,7 +137,7 @@ body > .screen-reader-text[role="status"] {
 	border: 1px solid transparent;
 	border-radius: 8px;
 	background: var(--okno-accent);
-	color: #fff;
+	color: var(--okno-on-accent);
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 1;
@@ -144,7 +148,7 @@ body > .screen-reader-text[role="status"] {
 
 .okno-editor .okno-btn:hover:not(:disabled) {
 	background: var(--okno-accent-hover);
-	color: #fff;
+	color: var(--okno-on-accent);
 }
 
 .okno-editor .okno-btn--quiet {
@@ -303,8 +307,8 @@ body > .screen-reader-text[role="status"] {
 
 .okno-vw.active {
 	background: var(--okno-bg);
-	color: var(--okno-accent);
-	box-shadow: 0 1px 2px rgba( 16, 17, 22, 0.1 );
+	color: var(--okno-accent-ink);
+	box-shadow: 0 1px 2px rgba( 10, 10, 10, 0.1 );
 }
 
 .okno-history {
@@ -321,7 +325,7 @@ body > .screen-reader-text[role="status"] {
 	padding: 5px 10px;
 	border-radius: 999px;
 	background: var(--okno-accent-soft);
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 	font-size: 12px;
 	font-weight: 600;
 	overflow: hidden;
@@ -423,7 +427,7 @@ body > .screen-reader-text[role="status"] {
 .okno-sidebar-tab.active {
 	background: var(--okno-bg);
 	color: var(--okno-ink);
-	box-shadow: 0 1px 2px rgba( 16, 17, 22, 0.1 );
+	box-shadow: 0 1px 2px rgba( 10, 10, 10, 0.1 );
 }
 
 .okno-sidebar-tab:disabled {
@@ -452,7 +456,9 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-pages-search:focus {
-	border-color: var(--okno-accent);
+	/* accent-ink et non accent-line : le contour est le seul signe du focus
+	   (outline retiré), il lui faut 3:1 minimum sur fond clair. */
+	border-color: var(--okno-accent-ink);
 	box-shadow: 0 0 0 3px var(--okno-accent-soft);
 	outline: none;
 }
@@ -490,7 +496,7 @@ body > .screen-reader-text[role="status"] {
 .okno-page-item.active,
 .okno-tree-node.active {
 	background: var(--okno-accent-soft);
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 	font-weight: 600;
 }
 
@@ -502,7 +508,7 @@ body > .screen-reader-text[role="status"] {
 
 .okno-page-item.active .okno-icon,
 .okno-tree-node.active .okno-icon {
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 }
 
 .okno-tree-chevron {
@@ -546,7 +552,7 @@ body > .screen-reader-text[role="status"] {
 
 .okno-tree-node.active .okno-tree-count {
 	background: var(--okno-bg);
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 }
 
 /* Actions au survol, sans recouvrir le libellé. */
@@ -718,7 +724,7 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-timeline-field:hover {
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 }
 
 .okno-timeline-meta {
@@ -913,7 +919,7 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-field-unsupported .okno-field-note a {
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 }
 
 .okno-crop-note {
@@ -987,14 +993,16 @@ body > .screen-reader-text[role="status"] {
 .okno-panel select:focus,
 .okno-sidebar select:focus,
 .okno-create-form input:focus {
-	border-color: var(--okno-accent);
+	/* accent-ink et non accent-line : le contour est le seul signe du focus
+	   (outline retiré), il lui faut 3:1 minimum sur fond clair. */
+	border-color: var(--okno-accent-ink);
 	box-shadow: 0 0 0 3px var(--okno-accent-soft);
 	outline: none;
 }
 
 .okno-panel input[type="range"] {
 	width: 100%;
-	accent-color: var(--okno-accent);
+	accent-color: var(--okno-accent-ink);
 }
 
 .okno-counted {
@@ -1031,7 +1039,7 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-toggle input {
-	accent-color: var(--okno-accent);
+	accent-color: var(--okno-accent-ink);
 }
 
 /* Images, fichiers, galerie. */
@@ -1212,8 +1220,8 @@ body > .screen-reader-text[role="status"] {
 }
 
 .okno-editor .okno-repeater-add:hover:not(:disabled) {
-	border-color: var(--okno-accent);
-	color: var(--okno-accent);
+	border-color: var(--okno-accent-line);
+	color: var(--okno-accent-ink);
 }
 
 .okno-flex-add {
@@ -1236,7 +1244,7 @@ body > .screen-reader-text[role="status"] {
 	margin-top: 6px;
 	border: 0;
 	background: none;
-	color: var(--okno-accent);
+	color: var(--okno-accent-ink);
 	font-size: 12px;
 	cursor: pointer;
 }
@@ -1273,7 +1281,7 @@ body > .screen-reader-text[role="status"] {
 	max-width: min( 520px, calc( 100vw - 32px ) );
 	padding: 11px 16px;
 	border-radius: 10px;
-	background: #1c1d22;
+	background: #0a0a0a;
 	color: #fff;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	font-size: 13px;
@@ -1299,10 +1307,10 @@ body > .screen-reader-text[role="status"] {
 	max-width: 520px;
 	margin: 80px auto;
 	padding: 40px;
-	border: 1px solid #e3e4e8;
+	border: 1px solid #e5e5e5;
 	border-radius: 12px;
 	background: #fff;
-	color: #42444d;
+	color: #404040;
 	font-size: 14px;
 	line-height: 1.6;
 	text-align: center;
@@ -1315,7 +1323,7 @@ body > .screen-reader-text[role="status"] {
 
 .okno-editor-setup h1 {
 	margin: 0 0 8px;
-	color: #1c1d22;
+	color: #0a0a0a;
 	font-size: 18px;
 	line-height: 1.35;
 }
@@ -1327,8 +1335,8 @@ body > .screen-reader-text[role="status"] {
 	margin-top: 12px;
 	padding: 0 18px;
 	border-radius: 8px;
-	background: #5b5bd6;
-	color: #fff;
+	background: #c5ff3e;
+	color: #0a0a0a;
 	font-weight: 600;
 	text-decoration: none;
 }

@@ -109,7 +109,7 @@ export function initOknoBridge( options ) {
 	const style = document.createElement( 'style' );
 	style.textContent =
 		'.' + CLOAK_CLASS + '{opacity:0 !important}' +
-		'.' + HOVER_CLASS + '{outline:2px solid #5b5bd6 !important;outline-offset:2px;cursor:pointer !important}' +
+		'.' + HOVER_CLASS + '{outline:2px solid #86c400 !important;outline-offset:2px;cursor:pointer !important}' +
 		'.' + MANAGED_CLASS + '{outline:2px dashed #b7791f !important;outline-offset:2px}';
 	document.head.appendChild( style );
 
