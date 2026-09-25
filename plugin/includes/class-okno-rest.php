@@ -234,7 +234,7 @@ class Okno_Rest {
 	public function get_post( WP_REST_Request $request ) {
 		$post = get_post( (int) $request['id'] );
 		if ( ! $post ) {
-			return new WP_Error( 'okno_not_found', __( 'Contenu introuvable.', 'okno' ), array( 'status' => 404 ) );
+			return new WP_Error( 'okno_not_found', __( 'Content not found.', 'okno' ), array( 'status' => 404 ) );
 		}
 		return rest_ensure_response( $this->post_item( $post, new Okno_Url_Mapper() ) );
 	}
@@ -248,7 +248,7 @@ class Okno_Rest {
 		$settings = Okno_Plugin::settings();
 		$url      = '' !== $settings['preview_url'] ? $settings['preview_url'] : $settings['front_url'];
 		if ( '' === $url ) {
-			return new WP_Error( 'okno_no_url', __( 'Aucune adresse de site renseignée.', 'okno' ), array( 'status' => 400 ) );
+			return new WP_Error( 'okno_no_url', __( 'No site URL set.', 'okno' ), array( 'status' => 400 ) );
 		}
 
 		$response = wp_remote_get(
@@ -265,7 +265,7 @@ class Okno_Rest {
 				array(
 					'reachable' => false,
 					'level'     => 'error',
-					'message'   => sprintf( /* translators: %s: erreur réseau. */ __( 'Site injoignable depuis le serveur : %s', 'okno' ), $response->get_error_message() ),
+					'message'   => sprintf( /* translators: %s: network error message. */ __( 'Can’t reach the site from the server: %s', 'okno' ), $response->get_error_message() ),
 				)
 			);
 		}
@@ -306,7 +306,7 @@ class Okno_Rest {
 				if ( '*' === $source || rtrim( $source, '/' ) === $wp_origin ) {
 					return array(
 						'level'   => 'ok',
-						'message' => __( 'Le site autorise wp-admin dans son en-tête frame-ancestors.', 'okno' ),
+						'message' => __( 'The site allows wp-admin in its frame-ancestors header.', 'okno' ),
 					);
 				}
 				// Joker de sous-domaine : https://*.exemple.fr.
@@ -315,15 +315,15 @@ class Okno_Rest {
 					if ( $wp_host && substr( $wp_host, -strlen( $suffix ) ) === $suffix ) {
 						return array(
 							'level'   => 'ok',
-							'message' => __( 'Le site autorise wp-admin dans son en-tête frame-ancestors.', 'okno' ),
+							'message' => __( 'The site allows wp-admin in its frame-ancestors header.', 'okno' ),
 						);
 					}
 				}
 			}
 			return array(
 				'level'   => 'error',
-				/* translators: 1: valeur actuelle, 2: origine de wp-admin. */
-				'message' => sprintf( __( 'L’en-tête frame-ancestors du site (%1$s) n’autorise pas %2$s. Ajoutez cette adresse.', 'okno' ), implode( ' ', $ancestors ), $wp_origin ),
+				/* translators: 1: current frame-ancestors value, 2: wp-admin origin. */
+				'message' => sprintf( __( 'The site’s frame-ancestors header (%1$s) doesn’t allow %2$s. Add this address.', 'okno' ), implode( ' ', $ancestors ), $wp_origin ),
 			);
 		}
 
@@ -331,14 +331,14 @@ class Okno_Rest {
 		if ( 'DENY' === $xfo || 'SAMEORIGIN' === $xfo ) {
 			return array(
 				'level'   => 'error',
-				/* translators: %s: valeur de X-Frame-Options. */
-				'message' => sprintf( __( 'Le site envoie X-Frame-Options: %s, qui empêche tout affichage dans wp-admin. Retirez cet en-tête et utilisez frame-ancestors.', 'okno' ), $xfo ),
+				/* translators: %s: X-Frame-Options value. */
+				'message' => sprintf( __( 'The site sends X-Frame-Options: %s, which blocks any display in wp-admin. Remove this header and use frame-ancestors.', 'okno' ), $xfo ),
 			);
 		}
 
 		return array(
 			'level'   => 'warn',
-			'message' => __( 'Aucun en-tête ne bloque l’affichage, donc l’éditeur fonctionnera. Pour protéger le site contre l’affichage par des tiers, ajoutez tout de même frame-ancestors.', 'okno' ),
+			'message' => __( 'No header blocks display, so the editor will work. To stop other sites from embedding yours, add frame-ancestors anyway.', 'okno' ),
 		);
 	}
 
@@ -364,7 +364,7 @@ class Okno_Rest {
 	public function get_activity( WP_REST_Request $request ) {
 		$post_id = absint( $request->get_param( 'post' ) );
 		if ( $post_id && ! current_user_can( 'edit_post', $post_id ) ) {
-			return new WP_Error( 'okno_forbidden', __( 'Accès refusé.', 'okno' ), array( 'status' => 403 ) );
+			return new WP_Error( 'okno_forbidden', __( 'Access denied.', 'okno' ), array( 'status' => 403 ) );
 		}
 
 		$items = array();
@@ -394,7 +394,7 @@ class Okno_Rest {
 		$type  = sanitize_key( (string) $request->get_param( 'post_type' ) );
 		$title = sanitize_text_field( (string) $request->get_param( 'title' ) );
 		if ( '' === trim( $title ) ) {
-			return new WP_Error( 'okno_bad_request', __( 'Un titre est requis.', 'okno' ), array( 'status' => 400 ) );
+			return new WP_Error( 'okno_bad_request', __( 'A title is required.', 'okno' ), array( 'status' => 400 ) );
 		}
 
 		$status = 'publish' === $request->get_param( 'status' ) ? 'publish' : 'draft';
@@ -429,12 +429,12 @@ class Okno_Rest {
 		$post_id = (int) $request['id'];
 		$post    = get_post( $post_id );
 		if ( ! $post ) {
-			return new WP_Error( 'okno_not_found', __( 'Contenu introuvable.', 'okno' ), array( 'status' => 404 ) );
+			return new WP_Error( 'okno_not_found', __( 'Content not found.', 'okno' ), array( 'status' => 404 ) );
 		}
 
 		$result = wp_trash_post( $post_id );
 		if ( ! $result ) {
-			return new WP_Error( 'okno_delete_failed', __( 'Suppression impossible.', 'okno' ), array( 'status' => 500 ) );
+			return new WP_Error( 'okno_delete_failed', __( 'Couldn’t delete this content.', 'okno' ), array( 'status' => 500 ) );
 		}
 
 		return rest_ensure_response(
@@ -452,13 +452,13 @@ class Okno_Rest {
 		$post_id = (int) $request['id'];
 		$post    = get_post( $post_id );
 		if ( ! $post ) {
-			return new WP_Error( 'okno_not_found', __( 'Contenu introuvable.', 'okno' ), array( 'status' => 404 ) );
+			return new WP_Error( 'okno_not_found', __( 'Content not found.', 'okno' ), array( 'status' => 404 ) );
 		}
 
 		$copy_id = wp_insert_post(
 			array(
 				'post_type'      => $post->post_type,
-				'post_title'     => sprintf( __( '%s (copie)', 'okno' ), $post->post_title ),
+				'post_title'     => sprintf( /* translators: %s: original title. */ __( '%s (copy)', 'okno' ), $post->post_title ),
 				'post_content'   => $post->post_content,
 				'post_excerpt'   => $post->post_excerpt,
 				'post_status'    => 'draft',
@@ -527,7 +527,7 @@ class Okno_Rest {
 		$values  = isset( $values['values'] ) && is_array( $values['values'] ) ? $values['values'] : null;
 
 		if ( null === $values || empty( $values ) ) {
-			return new WP_Error( 'okno_bad_request', __( 'Aucune valeur à enregistrer.', 'okno' ), array( 'status' => 400 ) );
+			return new WP_Error( 'okno_bad_request', __( 'Nothing to save.', 'okno' ), array( 'status' => 400 ) );
 		}
 
 		// Refus d'écraser une version plus récente (autre éditeur, autre onglet).
@@ -538,7 +538,7 @@ class Okno_Rest {
 			$fresh = ( new Okno_Schema( $this->plugin ) )->get( $post_id );
 			return new WP_Error(
 				'okno_conflict',
-				__( 'Ce contenu a été modifié ailleurs depuis son ouverture. Rechargez pour repartir de la version à jour.', 'okno' ),
+				__( 'This content was changed elsewhere since you opened it. Reload to get the latest version.', 'okno' ),
 				array(
 					'status' => 409,
 					'schema' => is_wp_error( $fresh ) ? null : $fresh,

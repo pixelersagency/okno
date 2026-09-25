@@ -64,15 +64,6 @@
 	/** Attente de stabilisation du DOM avant re-collecte (rendus successifs de React). */
 	const SETTLE_MS = 120;
 
-	/** Noms lisibles des fournisseurs de contenu courants. */
-	const PROVIDERS = {
-		wordpress: 'WordPress',
-		menu: 'Menus WordPress',
-		acf: 'ACF',
-		woocommerce: 'WooCommerce',
-		jetengine: 'JetEngine',
-	};
-
 	/** Balises retirées de tout HTML injecté dans l'aperçu. */
 	const BANNED_TAGS = [ 'script', 'style', 'iframe', 'object', 'embed', 'link', 'meta', 'base', 'form' ];
 
@@ -88,7 +79,7 @@
 
 		const wpOrigin = options && options.wpOrigin;
 		if ( ! wpOrigin ) {
-			console.warn( '[okno] wpOrigin manquant : bridge inactif.' );
+			console.warn( '[okno] Missing wpOrigin: bridge inactive.' );
 			return;
 		}
 
@@ -143,7 +134,7 @@
 			cloakTimer = setTimeout( () => {
 				uncloak();
 				send( { type: 'cloakTimeout' } );
-				console.warn( '[okno] wp-admin n’a pas répondu : aperçu affiché sans hydratation.' );
+				console.warn( '[okno] wp-admin did not respond: preview shown without hydration.' );
 			}, cloakDelay );
 		}
 
@@ -165,24 +156,29 @@
 			return host ? host.getAttribute( 'data-wp-post' ) : '';
 		}
 
-		function sectionLabel( el, index ) {
+		// Libellé vide = libellé par défaut, composé et traduit côté éditeur
+		// (le bridge ne connaît pas la langue de wp-admin) ; voir sectionAuto().
+		function sectionLabel( el ) {
 			const explicit = el.getAttribute( 'data-okno-section' ) || el.getAttribute( 'aria-label' );
 			if ( explicit ) {
 				return explicit;
 			}
 			const tag = el.tagName.toLowerCase();
-			if ( 'header' === tag ) {
-				return 'En-tête';
-			}
-			if ( 'footer' === tag ) {
-				return 'Pied de page';
+			if ( 'header' === tag || 'footer' === tag ) {
+				return '';
 			}
 			const heading = el.querySelector( 'h1, h2, h3' );
 			if ( heading && heading.textContent.trim() ) {
 				const text = heading.textContent.trim().replace( /\s+/g, ' ' );
 				return text.length > 48 ? text.slice( 0, 45 ) + '…' : text;
 			}
-			return 'Section ' + ( index + 1 );
+			return '';
+		}
+
+		/** Nature du libellé par défaut : 'header', 'footer' ou 'section' (numérotée). */
+		function sectionAuto( el ) {
+			const tag = el.tagName.toLowerCase();
+			return 'header' === tag || 'footer' === tag ? tag : 'section';
 		}
 
 		function sectionLayout( el ) {
@@ -233,7 +229,8 @@
 					el.setAttribute( 'data-okno-sid', id );
 					nextSections.push( {
 						id,
-						label: sectionLabel( el, nextSections.length ),
+						label: sectionLabel( el ),
+						auto: sectionAuto( el ),
 						layout: sectionLayout( el ),
 						el,
 						fields: [],
@@ -274,7 +271,7 @@
 			return JSON.stringify( [
 				window.location.pathname,
 				[ ...fields.keys() ].sort(),
-				sections.map( ( s ) => [ s.label, s.layout && s.layout.path, s.layout && s.layout.index ] ),
+				sections.map( ( s ) => [ s.label, s.auto, s.layout && s.layout.path, s.layout && s.layout.index ] ),
 			] );
 		}
 
@@ -388,7 +385,7 @@
 				version: VERSION,
 				url: window.location.href,
 				posts,
-				sections: sections.map( ( s ) => ( { id: s.id, label: s.label, layout: s.layout, fields: s.fields } ) ),
+				sections: sections.map( ( s ) => ( { id: s.id, label: s.label, auto: s.auto, layout: s.layout, fields: s.fields } ) ),
 			} );
 		}
 
@@ -508,7 +505,7 @@
 					send( {
 						type: 'managedFocus',
 						provider,
-						label: managed.getAttribute( 'data-okno-managed-label' ) || 'Géré dans ' + ( PROVIDERS[ provider ] || provider || 'WordPress' ),
+						label: managed.getAttribute( 'data-okno-managed-label' ) || '',
 						editUrl: managed.getAttribute( 'data-okno-edit-url' ) || '',
 					} );
 					return;

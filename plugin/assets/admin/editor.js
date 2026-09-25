@@ -15,10 +15,22 @@
 
 	var cfg = window.OknoConfig || {};
 	var apiFetch = window.wp && window.wp.apiFetch;
+	var __ = wp.i18n.__, _n = wp.i18n._n, sprintf = wp.i18n.sprintf;
 
 	if ( ! apiFetch || ! document.getElementById( 'okno-editor' ) ) {
 		return;
 	}
+
+	// Langue de wp-admin pour les dates (et non une locale figée).
+	var LOCALE = ( function () {
+		var lang = document.documentElement.lang || undefined;
+		try {
+			new Intl.DateTimeFormat( lang );
+			return lang;
+		} catch ( e ) {
+			return undefined; // Balise de langue invalide : locale du navigateur.
+		}
+	} )();
 
 	var PER_PAGE = 50;
 	var AUTOSAVE_MS = 2000;
@@ -168,7 +180,7 @@
 	}
 
 	function confirmLoseChanges() {
-		return ! isDirty() || window.confirm( 'Des modifications ne sont pas enregistrées. Continuer les perdra. Continuer ?' );
+		return ! isDirty() || window.confirm( __( 'You have unsaved changes. Continuing will discard them. Continue?', 'okno' ) );
 	}
 
 	function dirtyCount() {
@@ -183,7 +195,7 @@
 		els.publish.hidden = !! cfg.liveMode;
 		els.publish.disabled = ! state.post || ! cfg.canDeploy || ! cfg.driverConfigured;
 		els.publish.title = ! cfg.driverConfigured
-			? 'Aucune méthode de mise en ligne configurée dans les réglages.'
+			? __( 'No publishing method is set up in the settings.', 'okno' )
 			: '';
 		if ( els.saveState ) {
 			var count = dirtyCount();
@@ -191,12 +203,13 @@
 			els.saveState.textContent = ! state.post
 				? ''
 				: state.saving
-				? 'Enregistrement…'
+				? __( 'Saving…', 'okno' )
 				: count
-				? count + ( count > 1 ? ' modifications non enregistrées' : ' modification non enregistrée' )
+				? /* translators: %d: number of unsaved changes. */
+				  sprintf( _n( '%d unsaved change', '%d unsaved changes', count, 'okno' ), count )
 				: cfg.liveMode
-				? 'Tout est en ligne'
-				: 'Tout est enregistré';
+				? __( 'Everything is live', 'okno' )
+				: __( 'Everything is saved', 'okno' );
 		}
 		if ( els.undo ) {
 			els.undo.disabled = state.history.index <= 0;
@@ -303,7 +316,7 @@
 		}
 		state.history.index -= 1;
 		restore( state.history.stack[ state.history.index ] );
-		announceToScreenReader( 'Modification annulée.' );
+		announceToScreenReader( __( 'Change undone.', 'okno' ) );
 	}
 
 	function redo() {
@@ -312,7 +325,7 @@
 		}
 		state.history.index += 1;
 		restore( state.history.stack[ state.history.index ] );
-		announceToScreenReader( 'Modification rétablie.' );
+		announceToScreenReader( __( 'Change redone.', 'okno' ) );
 	}
 
 	/* ------------------------------------------------------------------ *
@@ -420,7 +433,7 @@
 		} else if ( 'managedFocus' === data.type ) {
 			showManaged( data );
 		} else if ( 'cloakTimeout' === data.type ) {
-			toast( 'L’aperçu s’est affiché sans hydratation : le handshake n’a pas abouti.', true );
+			toast( __( 'The preview loaded without your content: the handshake did not complete.', 'okno' ), true );
 		}
 	} );
 
@@ -431,7 +444,8 @@
 	 */
 	function onNavigateFromFrame( data ) {
 		if ( data.external ) {
-			if ( window.confirm( 'Ce lien sort du site (' + data.href + '). L’ouvrir dans un nouvel onglet ?' ) ) {
+			/* translators: %s: URL of the external link. */
+			if ( window.confirm( sprintf( __( 'This link leaves the site (%s). Open it in a new tab?', 'okno' ), data.href ) ) ) {
 				window.open( data.href, '_blank', 'noopener' );
 			}
 			return;
@@ -450,7 +464,7 @@
 
 		// Page inconnue d'Okno (hors post types configurés, ou URL non mappée) :
 		// on recharge quand même l'aperçu dessus pour ne pas bloquer la visite.
-		toast( 'Cette page n’est pas éditable depuis Okno — aperçu seul.' );
+		toast( __( 'This page can’t be edited with Okno — preview only.', 'okno' ) );
 		loadFrame( data.href );
 	}
 
@@ -458,6 +472,21 @@
 	 * Un clic sur un contenu géré ailleurs (menu, liste, produit) : on explique
 	 * où le modifier au lieu de ne rien faire.
 	 */
+	/** Noms lisibles des fournisseurs de contenu courants (clé data-okno-managed). */
+	var MANAGED_PROVIDERS = {
+		wordpress: 'WordPress',
+		menu: __( 'WordPress menus', 'okno' ),
+		acf: 'ACF',
+		woocommerce: 'WooCommerce',
+		jetengine: 'JetEngine',
+	};
+
+	function managedLabel( provider ) {
+		var name = MANAGED_PROVIDERS[ provider ] || provider || 'WordPress';
+		/* translators: %s: name of the tool that manages this content (e.g. WooCommerce). */
+		return sprintf( __( 'Managed in %s', 'okno' ), name );
+	}
+
 	function showManaged( data ) {
 		state.selection = 'managed';
 		renderStructure();
@@ -467,11 +496,11 @@
 		card.className = 'okno-managed';
 
 		var title = document.createElement( 'h2' );
-		title.textContent = data.label || 'Contenu géré ailleurs';
+		title.textContent = data.label || managedLabel( data.provider );
 		card.appendChild( title );
 
 		var text = document.createElement( 'p' );
-		text.textContent = 'Ce contenu ne vient pas d’un champ de la page : il se modifie dans son propre écran de WordPress. Les changements y apparaîtront ici après enregistrement.';
+		text.textContent = __( 'This content doesn’t come from a field on this page: it’s edited on its own WordPress screen. Changes made there will show up here once saved.', 'okno' );
 		card.appendChild( text );
 
 		// On n'ouvre que des écrans de ce wp-admin : l'URL vient du HTML du site,
@@ -488,7 +517,7 @@
 			link.href = url.href;
 			link.target = '_blank';
 			link.rel = 'noopener';
-			link.textContent = 'Ouvrir l’écran de modification';
+			link.textContent = __( 'Open the edit screen', 'okno' );
 			card.appendChild( link );
 		}
 
@@ -536,7 +565,7 @@
 			if ( landed && landed.id !== state.post.id ) {
 				if ( isDirty() ) {
 					writeDraft();
-					toast( 'Vos modifications de la page précédente sont conservées en brouillon local.' );
+					toast( __( 'Your changes to the previous page were kept as an unsaved draft.', 'okno' ) );
 				}
 				// Le handshake sera rejoué une fois le schéma de la nouvelle page
 				// chargé : sinon elle serait prise pour un contenu « global ».
@@ -555,7 +584,19 @@
 			} );
 		} );
 
-		state.sections = data.sections || [];
+		state.sections = ( data.sections || [] ).map( function ( section, i ) {
+			// Libellé par défaut composé ici (le bridge ne connaît pas la langue de wp-admin).
+			if ( ! section.label ) {
+				section.label =
+					'header' === section.auto
+						? __( 'Header', 'okno' )
+						: 'footer' === section.auto
+						? __( 'Footer', 'okno' )
+						: /* translators: %d: position of the section on the page. */
+						  sprintf( __( 'Section %d', 'okno' ), i + 1 );
+			}
+			return section;
+		} );
 
 		// Posts annoncés mais pas encore chargés : les globaux (header, footer…).
 		var missing = Object.keys( announcedPosts ).filter( function ( postId ) {
@@ -769,9 +810,9 @@
 	els.tabPages.setAttribute( 'aria-controls', 'okno-pages-list' );
 	els.tabStructure.setAttribute( 'aria-controls', 'okno-structure-tree' );
 	els.pagesList.setAttribute( 'role', 'tabpanel' );
-	els.pagesList.setAttribute( 'aria-label', 'Pages du site' );
+	els.pagesList.setAttribute( 'aria-label', __( 'Site pages', 'okno' ) );
 	els.structureTree.setAttribute( 'role', 'tabpanel' );
-	els.structureTree.setAttribute( 'aria-label', 'Structure de la page' );
+	els.structureTree.setAttribute( 'aria-label', __( 'Page structure', 'okno' ) );
 	if ( els.tabPages.parentElement ) {
 		els.tabPages.parentElement.setAttribute( 'role', 'tablist' );
 	}
@@ -786,7 +827,7 @@
 		els.tabHistory.setAttribute( 'role', 'tab' );
 		els.tabHistory.setAttribute( 'aria-controls', 'okno-history-list' );
 		els.historyList.setAttribute( 'role', 'tabpanel' );
-		els.historyList.setAttribute( 'aria-label', 'Historique de la page' );
+		els.historyList.setAttribute( 'aria-label', __( 'Page history', 'okno' ) );
 		els.tabHistory.addEventListener( 'click', function () {
 			switchTab( 'history' );
 		} );
@@ -831,13 +872,13 @@
 						apiFetch( { path: '/okno/v1/posts/' + cfg.initialPost } )
 							.then( openPost )
 							.catch( function () {
-								toast( 'Ce contenu n’existe plus ou vous n’avez pas le droit de le modifier.', true );
+								toast( __( 'This content no longer exists or you’re not allowed to edit it.', 'okno' ), true );
 							} );
 					}
 				}
 			} )
 			.catch( function ( err ) {
-				toast( ( err && err.message ) || 'Impossible de charger la liste des contenus.', true );
+				toast( ( err && err.message ) || __( 'Couldn’t load the content list.', 'okno' ), true );
 			} );
 	}
 
@@ -858,27 +899,27 @@
 		var searchLabel = document.createElement( 'label' );
 		searchLabel.className = 'screen-reader-text';
 		searchLabel.setAttribute( 'for', searchId );
-		searchLabel.textContent = 'Rechercher une page';
+		searchLabel.textContent = __( 'Search pages', 'okno' );
 		els.pagesList.appendChild( searchLabel );
 
 		var search = document.createElement( 'input' );
 		search.type = 'search';
 		search.id = searchId;
 		search.className = 'okno-pages-search';
-		search.placeholder = 'Rechercher une page…';
+		search.placeholder = __( 'Search pages…', 'okno' );
 		search.value = state.postsSearch;
 		els.pagesList.appendChild( search );
 
 		var treeWrap = document.createElement( 'div' );
 		treeWrap.setAttribute( 'role', 'tree' );
-		treeWrap.setAttribute( 'aria-label', 'Contenus éditables' );
+		treeWrap.setAttribute( 'aria-label', __( 'Editable content', 'okno' ) );
 		els.pagesList.appendChild( treeWrap );
 
 		if ( state.postsPage < state.postsTotalPages ) {
 			var more = document.createElement( 'button' );
 			more.type = 'button';
 			more.className = 'okno-btn okno-btn--quiet okno-pages-more';
-			more.textContent = 'Charger plus de contenus';
+			more.textContent = __( 'Load more content', 'okno' );
 			more.addEventListener( 'click', function () {
 				more.disabled = true;
 				loadPosts( { append: true } );
@@ -990,7 +1031,7 @@
 
 		var name = document.createElement( 'span' );
 		name.className = 'okno-page-item-title';
-		name.textContent = post.title || '(sans titre)';
+		name.textContent = post.title || __( '(no title)', 'okno' );
 		item.appendChild( name );
 
 		if ( 'publish' !== post.status ) {
@@ -1024,18 +1065,26 @@
 		duplicate.type = 'button';
 		duplicate.className = 'okno-page-action';
 		duplicate.textContent = '⧉';
-		duplicate.title = 'Dupliquer « ' + ( post.title || '' ) + ' »';
-		duplicate.setAttribute( 'aria-label', 'Dupliquer ' + ( post.title || 'ce contenu' ) );
+		/* translators: %s: content title. */
+		duplicate.title = sprintf( __( 'Duplicate “%s”', 'okno' ), post.title || '' );
+		duplicate.setAttribute(
+			'aria-label',
+			post.title
+				? /* translators: %s: content title. */
+				  sprintf( __( 'Duplicate %s', 'okno' ), post.title )
+				: __( 'Duplicate this content', 'okno' )
+		);
 		duplicate.addEventListener( 'click', function ( event ) {
 			event.stopPropagation();
 			duplicate.disabled = true;
 			apiFetch( { path: '/okno/v1/posts/' + post.id + '/duplicate', method: 'POST' } )
 				.then( function ( copy ) {
-					toast( '« ' + copy.title + ' » créée en brouillon.' );
+					/* translators: %s: content title. */
+					toast( sprintf( __( '“%s” created as a draft.', 'okno' ), copy.title ) );
 					return loadPosts();
 				} )
 				.catch( function ( err ) {
-					toast( ( err && err.message ) || 'Duplication impossible.', true );
+					toast( ( err && err.message ) || __( 'Couldn’t duplicate this content.', 'okno' ), true );
 				} )
 				.finally( function () {
 					duplicate.disabled = false;
@@ -1048,23 +1097,31 @@
 			remove.type = 'button';
 			remove.className = 'okno-page-action okno-page-action-danger';
 			remove.textContent = '×';
-			remove.title = 'Mettre « ' + ( post.title || '' ) + ' » à la corbeille';
-			remove.setAttribute( 'aria-label', 'Mettre ' + ( post.title || 'ce contenu' ) + ' à la corbeille' );
+			/* translators: %s: content title. */
+			remove.title = sprintf( __( 'Move “%s” to trash', 'okno' ), post.title || '' );
+			remove.setAttribute(
+				'aria-label',
+				post.title
+					? /* translators: %s: content title. */
+					  sprintf( __( 'Move %s to trash', 'okno' ), post.title )
+					: __( 'Move this content to trash', 'okno' )
+			);
 			remove.addEventListener( 'click', function ( event ) {
 				event.stopPropagation();
-				if ( ! window.confirm( 'Mettre « ' + ( post.title || '' ) + ' » à la corbeille ?' ) ) {
+				/* translators: %s: content title. */
+				if ( ! window.confirm( sprintf( __( 'Move “%s” to trash?', 'okno' ), post.title || '' ) ) ) {
 					return;
 				}
 				apiFetch( { path: '/okno/v1/posts/' + post.id, method: 'DELETE' } )
 					.then( function () {
-						toast( 'Contenu mis à la corbeille.' );
+						toast( __( 'Content moved to trash.', 'okno' ) );
 						if ( state.post && state.post.id === post.id ) {
 							closePost();
 						}
 						return loadPosts();
 					} )
 					.catch( function ( err ) {
-						toast( ( err && err.message ) || 'Suppression impossible.', true );
+						toast( ( err && err.message ) || __( 'Couldn’t move this content to trash.', 'okno' ), true );
 					} );
 			} );
 			actions.appendChild( remove );
@@ -1088,7 +1145,7 @@
 		var toggle = document.createElement( 'button' );
 		toggle.type = 'button';
 		toggle.className = 'okno-btn okno-btn--quiet okno-create-toggle';
-		toggle.textContent = '+ Nouveau contenu';
+		toggle.textContent = __( '+ New content', 'okno' );
 		toggle.setAttribute( 'aria-expanded', 'false' );
 		box.appendChild( toggle );
 
@@ -1101,7 +1158,7 @@
 
 		var titleLabel = document.createElement( 'label' );
 		titleLabel.setAttribute( 'for', titleId );
-		titleLabel.textContent = 'Titre';
+		titleLabel.textContent = __( 'Title', 'okno' );
 		form.appendChild( titleLabel );
 
 		var title = document.createElement( 'input' );
@@ -1112,7 +1169,7 @@
 
 		var typeLabel = document.createElement( 'label' );
 		typeLabel.setAttribute( 'for', typeId );
-		typeLabel.textContent = 'Type';
+		typeLabel.textContent = __( 'Type', 'okno' );
 		form.appendChild( typeLabel );
 
 		var type = document.createElement( 'select' );
@@ -1128,7 +1185,7 @@
 		var submit = document.createElement( 'button' );
 		submit.type = 'submit';
 		submit.className = 'okno-btn';
-		submit.textContent = 'Créer en brouillon';
+		submit.textContent = __( 'Create as draft', 'okno' );
 		form.appendChild( submit );
 
 		toggle.addEventListener( 'click', function () {
@@ -1154,7 +1211,8 @@
 					title.value = '';
 					form.hidden = true;
 					toggle.setAttribute( 'aria-expanded', 'false' );
-					toast( '« ' + post.title +' » créée en brouillon.' );
+					/* translators: %s: content title. */
+					toast( sprintf( __( '“%s” created as a draft.', 'okno' ), post.title ) );
 					return loadPosts().then( function () {
 						var fresh = state.posts.find( function ( p ) {
 							return p.id === post.id;
@@ -1165,7 +1223,7 @@
 					} );
 				} )
 				.catch( function ( err ) {
-					toast( ( err && err.message ) || 'Création impossible.', true );
+					toast( ( err && err.message ) || __( 'Couldn’t create this content.', 'okno' ), true );
 				} )
 				.finally( function () {
 					submit.disabled = false;
@@ -1213,7 +1271,7 @@
 	function openPost( post, options ) {
 		options = options || {};
 		if ( ! post.preview_url ) {
-			toast( 'Ce contenu n’a pas d’URL mappée. Vérifiez les réglages Okno.', true );
+			toast( __( 'This content has no mapped URL. Check the Okno settings.', 'okno' ), true );
 			return;
 		}
 
@@ -1240,7 +1298,8 @@
 			var draft = readDraft( post.id );
 			if ( draft && draft.revision === schema.revision && draft.dirty ) {
 				var when = new Date( draft.savedAt );
-				if ( window.confirm( 'Des modifications non enregistrées datant du ' + when.toLocaleString() + ' ont été retrouvées. Les restaurer ?' ) ) {
+				/* translators: %s: date and time the unsaved changes were made. */
+				if ( window.confirm( sprintf( __( 'Unsaved changes from %s were found. Restore them?', 'okno' ), when.toLocaleString( LOCALE ) ) ) ) {
 					applyDraft( draft );
 				} else {
 					clearDraft( post.id );
@@ -1424,7 +1483,8 @@
 	}
 
 	function deleteRow( host, index, label ) {
-		if ( ! window.confirm( 'Supprimer la section « ' + label + ' » ?' ) ) {
+		/* translators: %s: section name. */
+		if ( ! window.confirm( sprintf( __( 'Delete the “%s” section?', 'okno' ), label ) ) ) {
 			return;
 		}
 		host.resolved.value.splice( index, 1 );
@@ -1445,7 +1505,8 @@
 		host.resolved.value.splice( index, 0, row );
 		( host.resolved.meta || [] ).splice( index, 0, {} );
 		commitStructure( host );
-		announceToScreenReader( 'Section « ' + layout.label + ' » ajoutée.' );
+		/* translators: %s: section type name. */
+		announceToScreenReader( sprintf( __( '“%s” section added.', 'okno' ), layout.label ) );
 	}
 
 	function treeNode( id, iconName, label, count, options ) {
@@ -1471,7 +1532,8 @@
 			var badge = document.createElement( 'span' );
 			badge.className = 'okno-tree-count';
 			badge.textContent = count;
-			badge.title = count + ' champ(s) éditable(s)';
+			/* translators: %d: number of editable fields. */
+			badge.title = sprintf( _n( '%d editable field', '%d editable fields', count, 'okno' ), count );
 			btn.appendChild( badge );
 		}
 
@@ -1494,7 +1556,7 @@
 		[
 			{
 				label: '↑',
-				title: 'Monter la section',
+				title: __( 'Move section up', 'okno' ),
 				disabled: 0 === index,
 				run: function () {
 					moveRow( host, index, -1 );
@@ -1502,7 +1564,7 @@
 			},
 			{
 				label: '↓',
-				title: 'Descendre la section',
+				title: __( 'Move section down', 'okno' ),
 				disabled: index === host.resolved.value.length - 1,
 				run: function () {
 					moveRow( host, index, 1 );
@@ -1510,7 +1572,7 @@
 			},
 			{
 				label: '⧉',
-				title: 'Dupliquer la section',
+				title: __( 'Duplicate section', 'okno' ),
 				disabled: false,
 				run: function () {
 					duplicateRow( host, index );
@@ -1518,7 +1580,7 @@
 			},
 			{
 				label: '×',
-				title: 'Supprimer la section',
+				title: __( 'Delete section', 'okno' ),
 				disabled: false,
 				run: function () {
 					deleteRow( host, index, label );
@@ -1530,7 +1592,8 @@
 			btn.className = 'okno-tree-action';
 			btn.textContent = action.label;
 			btn.title = action.title;
-			btn.setAttribute( 'aria-label', action.title + ' : ' + label );
+			/* translators: 1: action (e.g. “Move section up”), 2: section name. */
+			btn.setAttribute( 'aria-label', sprintf( __( '%1$s: %2$s', 'okno' ), action.title, label ) );
 			btn.disabled = action.disabled;
 			btn.addEventListener( 'click', function ( event ) {
 				event.stopPropagation();
@@ -1555,7 +1618,8 @@
 			var selectId = uid( 'layout' );
 			var label = document.createElement( 'label' );
 			label.setAttribute( 'for', selectId );
-			label.textContent = 'Ajouter une section (' + host.resolved.def.label + ')';
+			/* translators: %s: name of the flexible content field. */
+			label.textContent = sprintf( __( 'Add a section (%s)', 'okno' ), host.resolved.def.label );
 			box.appendChild( label );
 
 			var picker = document.createElement( 'div' );
@@ -1574,7 +1638,7 @@
 			var add = document.createElement( 'button' );
 			add.type = 'button';
 			add.className = 'okno-btn';
-			add.textContent = 'Ajouter';
+			add.textContent = __( 'Add', 'okno' );
 			add.addEventListener( 'click', function () {
 				addRow( host, select.value );
 			} );
@@ -1594,10 +1658,10 @@
 
 		var tree = document.createElement( 'div' );
 		tree.setAttribute( 'role', 'tree' );
-		tree.setAttribute( 'aria-label', 'Sections de la page' );
+		tree.setAttribute( 'aria-label', __( 'Page sections', 'okno' ) );
 		els.structureTree.appendChild( tree );
 
-		tree.appendChild( treeNode( 'page', 'page', state.post.title || 'Page', 0 ) );
+		tree.appendChild( treeNode( 'page', 'page', state.post.title || __( 'Page', 'okno' ), 0 ) );
 
 		var hosts = layoutHosts();
 
@@ -1619,7 +1683,7 @@
 
 			var notice = document.createElement( 'p' );
 			notice.className = 'okno-tree-hint';
-			notice.textContent = 'Structure modifiée : enregistrez pour la voir dans l’aperçu.';
+			notice.textContent = __( 'Structure changed: save to see it in the preview.', 'okno' );
 			els.structureTree.appendChild( notice );
 		} else {
 			state.sections.forEach( function ( section ) {
@@ -1646,12 +1710,14 @@
 			var hint = document.createElement( 'p' );
 			hint.className = 'okno-tree-hint';
 			if ( ! state.bridgeReady ) {
-				hint.textContent = 'La structure apparaîtra quand l’aperçu aura répondu.';
+				hint.textContent = __( 'The structure will appear once the preview responds.', 'okno' );
 			} else if ( state.bridgeVersion < 3 ) {
-				hint.textContent =
-					'L’aperçu utilise une ancienne version du bridge : mettez-le à jour (v3) pour la navigation et les opérations de structure.';
+				hint.textContent = __(
+					'The preview uses an old version of the bridge: update it (v3) to get navigation and structure editing.',
+					'okno'
+				);
 			} else {
-				hint.textContent = 'Aucune section détectée sur cette page.';
+				hint.textContent = __( 'No sections found on this page.', 'okno' );
 			}
 			els.structureTree.appendChild( hint );
 		}
@@ -1764,7 +1830,11 @@
 			var field = state.fields[ fieldKey( f.post, segments[ 0 ] ) ];
 			if ( field ) {
 				var schema = state.schemas[ field._post ];
-				var origin = schema && schema._global ? field._group + ' — global' : field._group;
+				var origin =
+					schema && schema._global
+						? /* translators: %s: field group name. */
+						  sprintf( __( '%s — global', 'okno' ), field._group )
+						: field._group;
 				push( origin, field, segments.length > 1 ? Number( segments[ 1 ] ) : undefined );
 			}
 		} );
@@ -1792,12 +1862,12 @@
 
 		els.panel.innerHTML = '';
 		els.panel.setAttribute( 'role', 'region' );
-		els.panel.setAttribute( 'aria-label', 'Champs de la sélection' );
+		els.panel.setAttribute( 'aria-label', __( 'Selected fields', 'okno' ) );
 
 		if ( ! state.post ) {
 			var empty = document.createElement( 'div' );
 			empty.className = 'okno-panel-empty';
-			empty.textContent = 'Choisissez une page dans le panneau Pages.';
+			empty.textContent = __( 'Pick a page in the Pages panel.', 'okno' );
 			els.panel.appendChild( empty );
 			return;
 		}
@@ -1809,10 +1879,10 @@
 			return s.id === state.selection;
 		} );
 		var title = document.createElement( 'h2' );
-		title.textContent = section ? section.label : ( state.post.title || 'Page' );
+		title.textContent = section ? section.label : state.post.title || __( 'Page', 'okno' );
 		header.appendChild( title );
 		var subtitle = document.createElement( 'p' );
-		subtitle.textContent = section ? 'Champs de cette section' : 'Champs de la page (hors sections)';
+		subtitle.textContent = section ? __( 'Fields in this section', 'okno' ) : __( 'Page fields (outside sections)', 'okno' );
 		header.appendChild( subtitle );
 		els.panel.appendChild( header );
 
@@ -1821,7 +1891,7 @@
 		if ( ! groups.length ) {
 			var none = document.createElement( 'div' );
 			none.className = 'okno-panel-empty';
-			none.textContent = 'Aucun champ éditable ici.';
+			none.textContent = __( 'No editable fields here.', 'okno' );
 			els.panel.appendChild( none );
 			return;
 		}
@@ -1968,8 +2038,8 @@
 		if ( false !== field.supported && ! isFieldVisible( field ) ) {
 			var badge = document.createElement( 'span' );
 			badge.className = 'okno-field-badge';
-			badge.textContent = 'hors aperçu';
-			badge.title = 'Ce champ n’est affiché nulle part sur cette page : il ne s’aperçoit pas en direct.';
+			badge.textContent = __( 'not on this page', 'okno' );
+			badge.title = __( 'This field isn’t shown anywhere on this page, so it can’t be previewed live.', 'okno' );
 			label.appendChild( badge );
 		}
 
@@ -1977,11 +2047,12 @@
 			wrap.classList.add( 'okno-field-unsupported' );
 			var note = document.createElement( 'p' );
 			note.className = 'okno-field-note';
-			note.textContent = 'Type « ' + field.type + ' » non éditable ici. ';
+			/* translators: %s: ACF field type (e.g. google_map). */
+			note.textContent = sprintf( __( 'The “%s” field type can’t be edited here.', 'okno' ), field.type ) + ' ';
 			if ( field.edit_url ) {
 				var link = document.createElement( 'a' );
 				link.href = field.edit_url;
-				link.textContent = 'Éditer dans WordPress';
+				link.textContent = __( 'Edit in WordPress', 'okno' );
 				note.appendChild( link );
 			}
 			wrap.appendChild( note );
@@ -2092,7 +2163,7 @@
 					commit( input.checked );
 				} );
 				toggleLabel.appendChild( input );
-				toggleLabel.appendChild( document.createTextNode( ' Activé' ) );
+				toggleLabel.appendChild( document.createTextNode( ' ' + __( 'Enabled', 'okno' ) ) );
 				return toggleLabel;
 
 			case 'number':
@@ -2263,7 +2334,8 @@
 		if ( false === sub.supported ) {
 			var note = document.createElement( 'p' );
 			note.className = 'okno-field-note';
-			note.textContent = 'Type « ' + sub.type + ' » non éditable ici.';
+			/* translators: %s: ACF field type (e.g. google_map). */
+			note.textContent = sprintf( __( 'The “%s” field type can’t be edited here.', 'okno' ), sub.type );
 			wrap.appendChild( note );
 			return wrap;
 		}
@@ -2310,7 +2382,8 @@
 			var expand = document.createElement( 'button' );
 			expand.type = 'button';
 			expand.className = 'okno-repeater-expand';
-			expand.textContent = 'Afficher toutes les lignes (' + rows.length + ')';
+			/* translators: %d: total number of rows. */
+			expand.textContent = sprintf( __( 'Show all rows (%d)', 'okno' ), rows.length );
 			expand.addEventListener( 'click', function () {
 				container.replaceWith( buildRows( ctx, null ) );
 			} );
@@ -2340,7 +2413,7 @@
 			var add = document.createElement( 'button' );
 			add.type = 'button';
 			add.className = 'okno-repeater-add';
-			add.textContent = '+ Ajouter une ligne';
+			add.textContent = __( '+ Add a row', 'okno' );
 			add.addEventListener( 'click', function () {
 				rows.push( emptyRow( null ) );
 				meta.push( {} );
@@ -2355,7 +2428,7 @@
 			box.className = 'okno-flex-add';
 
 			var select = document.createElement( 'select' );
-			select.setAttribute( 'aria-label', 'Type de bloc à ajouter' );
+			select.setAttribute( 'aria-label', __( 'Type of block to add', 'okno' ) );
 			( def.layouts || [] ).forEach( function ( layout ) {
 				var opt = document.createElement( 'option' );
 				opt.value = layout.name;
@@ -2367,7 +2440,7 @@
 			var add = document.createElement( 'button' );
 			add.type = 'button';
 			add.className = 'okno-repeater-add';
-			add.textContent = '+ Ajouter un bloc';
+			add.textContent = __( '+ Add a block', 'okno' );
 			add.addEventListener( 'click', function () {
 				var layout = ( def.layouts || [] ).find( function ( l ) {
 					return l.name === select.value;
@@ -2379,7 +2452,8 @@
 				meta.push( {} );
 				commitRows( true );
 				renderRows();
-				announceToScreenReader( 'Bloc « ' + layout.label + ' » ajouté.' );
+				/* translators: %s: block type name. */
+				announceToScreenReader( sprintf( __( '“%s” block added.', 'okno' ), layout.label ) );
 			} );
 			box.appendChild( add );
 
@@ -2388,10 +2462,12 @@
 
 		function rowTitle( row, i ) {
 			if ( ! flexible ) {
-				return 'Ligne ' + ( i + 1 );
+				/* translators: %d: row number. */
+				return sprintf( __( 'Row %d', 'okno' ), i + 1 );
 			}
 			var layout = layoutOf( def, row );
-			return ( layout ? layout.label : row._layout ) + ' — ' + ( i + 1 );
+			/* translators: 1: block type name, 2: block number. */
+			return sprintf( __( '%1$s — %2$d', 'okno' ), layout ? layout.label : row._layout, i + 1 );
 		}
 
 		function renderRows() {
@@ -2429,7 +2505,7 @@
 			[
 				{
 					label: '↑',
-					title: 'Monter',
+					title: __( 'Move up', 'okno' ),
 					disabled: 0 === i,
 					run: function () {
 						move( i, -1 );
@@ -2437,7 +2513,7 @@
 				},
 				{
 					label: '↓',
-					title: 'Descendre',
+					title: __( 'Move down', 'okno' ),
 					disabled: i === rows.length - 1,
 					run: function () {
 						move( i, 1 );
@@ -2445,7 +2521,7 @@
 				},
 				{
 					label: '⧉',
-					title: 'Dupliquer',
+					title: __( 'Duplicate', 'okno' ),
 					disabled: def.max > 0 && rows.length >= def.max,
 					run: function () {
 						rows.splice( i + 1, 0, clone( row ) );
@@ -2456,7 +2532,7 @@
 				},
 				{
 					label: '×',
-					title: 'Supprimer',
+					title: __( 'Delete', 'okno' ),
 					disabled: rows.length <= ( def.min || 0 ),
 					run: function () {
 						rows.splice( i, 1 );
@@ -2471,7 +2547,8 @@
 				b.className = 'okno-repeater-btn';
 				b.textContent = a.label;
 				b.title = a.title;
-				b.setAttribute( 'aria-label', a.title + ' : ' + rowTitle( row, i ) );
+				/* translators: 1: action (e.g. “Move up”), 2: row name. */
+				b.setAttribute( 'aria-label', sprintf( __( '%1$s: %2$s', 'okno' ), a.title, rowTitle( row, i ) ) );
 				b.disabled = a.disabled;
 				b.addEventListener( 'click', a.run );
 				actions.appendChild( b );
@@ -2563,7 +2640,7 @@
 	function pickMedia( options ) {
 		return new Promise( function ( resolve ) {
 			if ( ! window.wp || ! window.wp.media ) {
-				toast( 'La médiathèque n’est pas disponible.', true );
+				toast( __( 'The media library isn’t available.', 'okno' ), true );
 				resolve( null );
 				return;
 			}
@@ -2614,12 +2691,16 @@
 		choose.type = 'button';
 		choose.className = 'okno-btn okno-btn--quiet';
 		choose.id = id || uid( 'media' );
-		choose.textContent = ctx.read() ? 'Remplacer' : isImage ? 'Choisir une image' : 'Choisir un fichier';
+		choose.textContent = ctx.read()
+			? __( 'Replace', 'okno' )
+			: isImage
+			? __( 'Choose an image', 'okno' )
+			: __( 'Choose a file', 'okno' );
 
 		var remove = document.createElement( 'button' );
 		remove.type = 'button';
 		remove.className = 'okno-image-remove';
-		remove.textContent = 'Retirer';
+		remove.textContent = __( 'Remove', 'okno' );
 		remove.hidden = ! ctx.read();
 
 		function setMedia( attachment ) {
@@ -2632,7 +2713,11 @@
 			preview.hidden = ! nextMeta.url || ! isImage;
 			name.textContent = isImage ? '' : nextMeta.title;
 			remove.hidden = ! value;
-			choose.textContent = value ? 'Remplacer' : isImage ? 'Choisir une image' : 'Choisir un fichier';
+			choose.textContent = value
+				? __( 'Replace', 'okno' )
+				: isImage
+				? __( 'Choose an image', 'okno' )
+				: __( 'Choose a file', 'okno' );
 			ctx.write( value, nextMeta );
 		}
 
@@ -2642,7 +2727,7 @@
 
 		choose.addEventListener( 'click', function () {
 			pickMedia( {
-				title: isImage ? 'Choisir une image' : 'Choisir un fichier',
+				title: isImage ? __( 'Choose an image', 'okno' ) : __( 'Choose a file', 'okno' ),
 				multiple: false,
 				library: isImage ? { type: 'image' } : {},
 				current: ctx.read() || 0,
@@ -2668,9 +2753,12 @@
 			if ( Math.abs( Math.log( imageRatio / known.ratio ) ) < 0.25 ) {
 				return;
 			}
-			cropNote.textContent =
-				'Cette image sera recadrée : l’emplacement est ' + describeRatio( known.ratio ) +
-				', l’image est ' + describeRatio( imageRatio ) + '. Vérifiez le cadrage dans l’aperçu.';
+			cropNote.textContent = sprintf(
+				/* translators: 1: shape of the image slot (e.g. “wide (1.78:1)”), 2: shape of the chosen image. */
+				__( 'This image will be cropped: the slot is %1$s, the image is %2$s. Check the framing in the preview.', 'okno' ),
+				describeRatio( known.ratio ),
+				describeRatio( imageRatio )
+			);
 			cropNote.hidden = false;
 		}
 
@@ -2685,14 +2773,20 @@
 		return container;
 	}
 
+	function formatRatio( n ) {
+		return n.toLocaleString( LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 } );
+	}
+
 	function describeRatio( ratio ) {
 		if ( ratio > 1.15 ) {
-			return 'en largeur (' + ratio.toFixed( 2 ).replace( '.', ',' ) + ':1)';
+			/* translators: %s: aspect ratio, e.g. 1.78 (as in 1.78:1). */
+			return sprintf( __( 'wide (%s:1)', 'okno' ), formatRatio( ratio ) );
 		}
 		if ( ratio < 0.87 ) {
-			return 'en hauteur (1:' + ( 1 / ratio ).toFixed( 2 ).replace( '.', ',' ) + ')';
+			/* translators: %s: aspect ratio, e.g. 1.50 (as in 1:1.50). */
+			return sprintf( __( 'tall (1:%s)', 'okno' ), formatRatio( 1 / ratio ) );
 		}
-		return 'presque carré';
+		return __( 'almost square', 'okno' );
 	}
 
 	function buildGallery( ctx ) {
@@ -2735,7 +2829,7 @@
 				[
 					{
 						label: '←',
-						title: 'Déplacer avant',
+						title: __( 'Move earlier', 'okno' ),
 						disabled: 0 === index,
 						run: function () {
 							var list = items().slice();
@@ -2747,7 +2841,7 @@
 					},
 					{
 						label: '→',
-						title: 'Déplacer après',
+						title: __( 'Move later', 'okno' ),
 						disabled: index === items().length - 1,
 						run: function () {
 							var list = items().slice();
@@ -2759,7 +2853,7 @@
 					},
 					{
 						label: '×',
-						title: 'Retirer de la galerie',
+						title: __( 'Remove from gallery', 'okno' ),
 						disabled: false,
 						run: function () {
 							var list = items().slice();
@@ -2773,7 +2867,17 @@
 					btn.className = 'okno-repeater-btn';
 					btn.textContent = action.label;
 					btn.title = action.title;
-					btn.setAttribute( 'aria-label', action.title + ' : ' + ( item.title || 'image ' + ( index + 1 ) ) );
+					btn.setAttribute(
+						'aria-label',
+						sprintf(
+							/* translators: 1: action (e.g. “Move earlier”), 2: image title. */
+							__( '%1$s: %2$s', 'okno' ),
+							action.title,
+							item.title ||
+								/* translators: %d: image position in the gallery. */
+								sprintf( __( 'image %d', 'okno' ), index + 1 )
+						)
+					);
 					btn.disabled = action.disabled;
 					btn.addEventListener( 'click', action.run );
 					actions.appendChild( btn );
@@ -2786,9 +2890,9 @@
 		var add = document.createElement( 'button' );
 		add.type = 'button';
 		add.className = 'okno-btn okno-btn--quiet';
-		add.textContent = '+ Ajouter des images';
+		add.textContent = __( '+ Add images', 'okno' );
 		add.addEventListener( 'click', function () {
-			pickMedia( { title: 'Ajouter à la galerie', multiple: true, library: { type: 'image' } } ).then( function (
+			pickMedia( { title: __( 'Add to gallery', 'okno' ), multiple: true, library: { type: 'image' } } ).then( function (
 				attachments
 			) {
 				if ( ! attachments ) {
@@ -2832,7 +2936,7 @@
 		var url = document.createElement( 'input' );
 		url.type = 'url';
 		url.id = id || uid( 'link' );
-		url.placeholder = 'https://… ou /contact';
+		url.placeholder = __( 'https://… or /contact', 'okno' );
 		url.value = value.url || '';
 		url.addEventListener( 'input', commit );
 		url.addEventListener( 'blur', function () {
@@ -2848,7 +2952,7 @@
 		titleLabel.className = 'okno-subfield-label';
 		var titleId = uid( 'link-title' );
 		titleLabel.setAttribute( 'for', titleId );
-		titleLabel.textContent = 'Libellé';
+		titleLabel.textContent = __( 'Label', 'okno' );
 		box.appendChild( titleLabel );
 
 		var title = document.createElement( 'input' );
@@ -2865,7 +2969,7 @@
 		target.checked = '_blank' === value.target;
 		target.addEventListener( 'change', commit );
 		targetLabel.appendChild( target );
-		targetLabel.appendChild( document.createTextNode( ' Ouvrir dans un nouvel onglet' ) );
+		targetLabel.appendChild( document.createTextNode( ' ' + __( 'Open in a new tab', 'okno' ) ) );
 		box.appendChild( targetLabel );
 
 		return box;
@@ -2905,7 +3009,7 @@
 		if ( ! Object.keys( ctx.def.options || {} ).length ) {
 			var note = document.createElement( 'p' );
 			note.className = 'okno-field-note';
-			note.textContent = 'Aucun élément disponible.';
+			note.textContent = __( 'No items available.', 'okno' );
 			box.appendChild( note );
 		}
 
@@ -2917,32 +3021,33 @@
 	 * ------------------------------------------------------------------ */
 
 	var ERROR_MESSAGES = {
-		required: 'Ce champ est obligatoire.',
-		too_long: 'Texte trop long pour ce champ.',
-		save_failed: 'WordPress a refusé l’écriture (contenu verrouillé ou extension qui bloque).',
-		invalid_email: 'Adresse e-mail invalide.',
-		invalid_number: 'Nombre invalide ou hors limites.',
-		invalid_choice: 'Choix non autorisé.',
-		invalid_attachment: 'Fichier introuvable ou non autorisé.',
-		invalid_post: 'Contenu lié introuvable.',
-		invalid_term: 'Catégorie introuvable.',
-		invalid_color: 'Couleur invalide.',
-		invalid_link: 'Lien invalide.',
-		invalid_date: 'Date invalide.',
-		invalid_reference: 'Élément lié introuvable.',
-		invalid_group: 'Groupe de champs mal formé : rechargez la page.',
-		invalid_rows: 'Lignes mal formées : rechargez la page.',
-		too_few_rows: 'Pas assez de lignes pour ce champ.',
-		too_many_rows: 'Trop de lignes pour ce champ.',
-		too_many_items: 'Trop d’éléments sélectionnés.',
-		unknown_layout: 'Type de bloc inconnu : rechargez la page.',
-		row_not_found: 'Cette ligne n’existe plus : rechargez la page.',
-		unknown_field: 'Champ inconnu de WordPress : rechargez la page.',
-		unsupported_type: 'Type de champ non géré par Okno.',
+		required: __( 'This field is required.', 'okno' ),
+		too_long: __( 'Text is too long for this field.', 'okno' ),
+		save_failed: __( 'WordPress refused to save (content is locked or a plugin is blocking it).', 'okno' ),
+		invalid_email: __( 'Invalid email address.', 'okno' ),
+		invalid_number: __( 'Invalid or out-of-range number.', 'okno' ),
+		invalid_choice: __( 'This choice isn’t allowed.', 'okno' ),
+		invalid_attachment: __( 'File not found or not allowed.', 'okno' ),
+		invalid_post: __( 'Linked content not found.', 'okno' ),
+		invalid_term: __( 'Category not found.', 'okno' ),
+		invalid_color: __( 'Invalid color.', 'okno' ),
+		invalid_link: __( 'Invalid link.', 'okno' ),
+		invalid_date: __( 'Invalid date.', 'okno' ),
+		invalid_reference: __( 'Linked item not found.', 'okno' ),
+		invalid_group: __( 'Malformed field group: reload the page.', 'okno' ),
+		invalid_rows: __( 'Malformed rows: reload the page.', 'okno' ),
+		too_few_rows: __( 'Not enough rows for this field.', 'okno' ),
+		too_many_rows: __( 'Too many rows for this field.', 'okno' ),
+		too_many_items: __( 'Too many items selected.', 'okno' ),
+		unknown_layout: __( 'Unknown block type: reload the page.', 'okno' ),
+		row_not_found: __( 'This row no longer exists: reload the page.', 'okno' ),
+		unknown_field: __( 'WordPress doesn’t know this field: reload the page.', 'okno' ),
+		unsupported_type: __( 'Okno doesn’t support this field type.', 'okno' ),
 	};
 
 	function errorMessage( code ) {
-		return ERROR_MESSAGES[ code ] || 'Valeur refusée (' + code + ').';
+		/* translators: %s: technical error code. */
+		return ERROR_MESSAGES[ code ] || sprintf( __( 'Value rejected (%s).', 'okno' ), code );
 	}
 
 	/** Erreurs du dernier enregistrement qui concernent ce champ ou ses sous-champs. */
@@ -2954,12 +3059,18 @@
 			} )
 			.map( function ( key ) {
 				var sub = key.slice( prefix.length + 1 );
+				var message = errorMessage( state.fieldErrors[ key ] );
+				if ( ! sub ) {
+					return message;
+				}
 				var where = sub
-					? sub.split( '.' ).map( function ( part ) {
-							return /^\d+$/.test( part ) ? '#' + ( Number( part ) + 1 ) : part;
-					  } ).join( ' › ' ) + ' : '
-					: '';
-				return where + errorMessage( state.fieldErrors[ key ] );
+					.split( '.' )
+					.map( function ( part ) {
+						return /^\d+$/.test( part ) ? '#' + ( Number( part ) + 1 ) : part;
+					} )
+					.join( ' › ' );
+				/* translators: 1: location of the sub-field (e.g. “#2 › title”), 2: error message. */
+				return sprintf( __( '%1$s: %2$s', 'okno' ), where, message );
 			} );
 	}
 
@@ -2972,8 +3083,8 @@
 
 	function onConflict( postId, err ) {
 		var fresh = err && err.data && err.data.schema;
-		toast( 'Ce contenu a changé ailleurs : vos modifications n’ont pas été écrites.', true );
-		if ( ! window.confirm( 'Ce contenu a été modifié ailleurs depuis son ouverture.\n\nRecharger la version à jour ? Vos modifications non enregistrées seront perdues.' ) ) {
+		toast( __( 'This content was changed elsewhere: your changes were not saved.', 'okno' ), true );
+		if ( ! window.confirm( __( 'This content was changed elsewhere since you opened it.\n\nLoad the latest version? Your unsaved changes will be lost.', 'okno' ) ) ) {
 			return;
 		}
 		if ( fresh ) {
@@ -2999,7 +3110,7 @@
 
 		state.saving = true;
 		setButtons();
-		els.save.textContent = 'Enregistrement…';
+		els.save.textContent = __( 'Saving…', 'okno' );
 
 		var postIds = Object.keys( state.dirtyByPost ).filter( function ( postId ) {
 			return Object.keys( state.dirtyByPost[ postId ] ).length > 0;
@@ -3044,7 +3155,12 @@
 						} );
 						errorPaths.forEach( function ( path ) {
 							state.fieldErrors[ fieldKey( postId, path ) ] = errors[ path ];
-							var label = errorLabel( postId, path ) + ' (' + errorMessage( errors[ path ] ).replace( /\.$/, '' ).toLowerCase() + ')';
+							var label = sprintf(
+								/* translators: 1: field name, 2: error message. */
+								__( '%1$s (%2$s)', 'okno' ),
+								errorLabel( postId, path ),
+								errorMessage( errors[ path ] ).replace( /\.$/, '' ).toLowerCase()
+							);
 							if ( errorLabels.indexOf( label ) === -1 ) {
 								errorLabels.push( label );
 							}
@@ -3094,15 +3210,18 @@
 
 				if ( totalErrors ) {
 					toast(
-						( 1 === totalErrors ? 'Un champ n’a pas été enregistré : ' : totalErrors + ' champs n’ont pas été enregistrés : ' ) +
-							errorLabels.join( ', ' ) +
-							'.',
+						sprintf(
+							/* translators: 1: number of fields not saved, 2: list of the fields and their errors. */
+							_n( '%1$d field wasn’t saved: %2$s.', '%1$d fields weren’t saved: %2$s.', totalErrors, 'okno' ),
+							totalErrors,
+							errorLabels.join( ', ' )
+						),
 						true
 					);
 				} else if ( cfg.liveMode ) {
-					toast( 'Enregistré : c’est en ligne.' );
+					toast( __( 'Saved: it’s live.', 'okno' ) );
 				} else {
-					toast( 'Enregistré. Cliquez sur « Publier » pour mettre en ligne.' );
+					toast( __( 'Saved. Click “Publish” to put it live.', 'okno' ) );
 				}
 				if ( els.historyList && ! els.historyList.hidden ) {
 					renderHistory();
@@ -3110,12 +3229,12 @@
 				return true;
 			} )
 			.catch( function ( err ) {
-				toast( ( err && err.message ) || 'Échec de l’enregistrement.', true );
+				toast( ( err && err.message ) || __( 'Saving failed.', 'okno' ), true );
 				return Promise.reject( err );
 			} )
 			.finally( function () {
 				state.saving = false;
-				els.save.textContent = 'Enregistrer';
+				els.save.textContent = __( 'Save', 'okno' );
 				setButtons();
 			} );
 	}
@@ -3132,7 +3251,7 @@
 		els.historyList.innerHTML = '';
 		var loading = document.createElement( 'p' );
 		loading.className = 'okno-tree-hint';
-		loading.textContent = 'Chargement…';
+		loading.textContent = __( 'Loading…', 'okno' );
 		els.historyList.appendChild( loading );
 
 		apiFetch( { path: '/okno/v1/activity?post=' + postId } )
@@ -3144,7 +3263,7 @@
 				if ( ! items.length ) {
 					var empty = document.createElement( 'p' );
 					empty.className = 'okno-tree-hint';
-					empty.textContent = 'Aucune modification enregistrée sur cette page pour l’instant.';
+					empty.textContent = __( 'No changes saved on this page yet.', 'okno' );
 					els.historyList.appendChild( empty );
 					return;
 				}
@@ -3156,7 +3275,7 @@
 				els.historyList.appendChild( list );
 			} )
 			.catch( function () {
-				loading.textContent = 'Impossible de charger l’historique.';
+				loading.textContent = __( 'Couldn’t load the history.', 'okno' );
 			} );
 	}
 
@@ -3168,7 +3287,7 @@
 		head.type = 'button';
 		head.className = 'okno-timeline-field';
 		head.textContent = item.label;
-		head.title = 'Afficher ce champ';
+		head.title = __( 'Show this field', 'okno' );
 		head.addEventListener( 'click', function () {
 			onFieldFocusFromFrame( String( state.post.id ), item.path );
 			postToFrame( { type: 'focusField', postId: String( state.post.id ), path: item.path } );
@@ -3177,15 +3296,15 @@
 
 		var meta = document.createElement( 'span' );
 		meta.className = 'okno-timeline-meta';
-		meta.textContent = ( item.user || 'Utilisateur inconnu' ) + ' · ' + relativeTime( item.when );
+		meta.textContent = ( item.user || __( 'Unknown user', 'okno' ) ) + ' · ' + relativeTime( item.when );
 		li.appendChild( meta );
 
 		var change = document.createElement( 'span' );
 		change.className = 'okno-timeline-change';
 		var before = document.createElement( 'del' );
-		before.textContent = shortValue( item.old, item.type ) || 'vide';
+		before.textContent = shortValue( item.old, item.type ) || __( 'empty', 'okno' );
 		var after = document.createElement( 'ins' );
-		after.textContent = shortValue( item.new, item.type ) || 'vide';
+		after.textContent = shortValue( item.new, item.type ) || __( 'empty', 'okno' );
 		change.appendChild( before );
 		change.appendChild( after );
 		li.appendChild( change );
@@ -3198,16 +3317,18 @@
 			return '';
 		}
 		if ( 'image' === type || 'file' === type ) {
-			return 'Image n°' + value;
+			/* translators: %s: media library ID of the image or file. */
+			return sprintf( __( 'Image #%s', 'okno' ), value );
 		}
 		if ( 'true_false' === type ) {
-			return '1' === value ? 'Oui' : 'Non';
+			return '1' === value ? __( 'Yes', 'okno' ) : __( 'No', 'okno' );
 		}
 		var text = value;
 		if ( '[' === value.charAt( 0 ) ) {
 			try {
 				var list = JSON.parse( value );
-				return list.length + ( list.length > 1 ? ' éléments' : ' élément' );
+				/* translators: %d: number of items. */
+				return sprintf( _n( '%d item', '%d items', list.length, 'okno' ), list.length );
 			} catch ( e ) {
 				/* texte brut */
 			}
@@ -3233,17 +3354,23 @@
 		}
 		var minutes = Math.round( ( Date.now() - then ) / 60000 );
 		if ( minutes < 1 ) {
-			return 'à l’instant';
+			return __( 'just now', 'okno' );
 		}
 		if ( minutes < 60 ) {
-			return 'il y a ' + minutes + ' min';
+			/* translators: %d: number of minutes. */
+			return sprintf( _n( '%d minute ago', '%d minutes ago', minutes, 'okno' ), minutes );
 		}
 		var hours = Math.round( minutes / 60 );
 		if ( hours < 24 ) {
-			return 'il y a ' + hours + ' h';
+			/* translators: %d: number of hours. */
+			return sprintf( _n( '%d hour ago', '%d hours ago', hours, 'okno' ), hours );
 		}
 		var days = Math.round( hours / 24 );
-		return days < 2 ? 'hier' : 'il y a ' + days + ' jours';
+		if ( days < 2 ) {
+			return __( 'yesterday', 'okno' );
+		}
+		/* translators: %d: number of days. */
+		return sprintf( _n( '%d day ago', '%d days ago', days, 'okno' ), days );
 	}
 
 	function publish() {
@@ -3269,7 +3396,7 @@
 				}
 			} )
 			.catch( function ( err ) {
-				toast( ( err && err.message ) || 'Échec du déclenchement du déploiement.', true );
+				toast( ( err && err.message ) || __( 'Couldn’t start the deployment.', 'okno' ), true );
 			} )
 			.finally( setButtons );
 	}
@@ -3284,23 +3411,27 @@
 		switch ( record.status ) {
 			case 'pending':
 			case 'building':
-				text = 'Build en cours…';
+				text = __( 'Building…', 'okno' );
 				break;
 			case 'triggered':
-				text = 'Déploiement déclenché — en ligne dans ~' + ( record.eta || 3 ) + ' min';
+				/* translators: %d: estimated number of minutes before the site is live. */
+				text = sprintf( __( 'Deployment triggered — live in ~%d min', 'okno' ), record.eta || 3 );
 				setTimeout( function () {
 					if ( ! banner.hidden && banner.classList.contains( 'okno-deploy-triggered' ) ) {
-						banner.textContent = 'Le site devrait être en ligne.';
+						banner.textContent = __( 'The site should be live now.', 'okno' );
 						setTimeout( hideBanner, 30000 );
 					}
 				}, ( record.eta || 3 ) * 60000 );
 				break;
 			case 'success':
-				text = 'En ligne ✓';
+				text = __( 'Live ✓', 'okno' );
 				setTimeout( hideBanner, 15000 );
 				break;
 			case 'error':
-				text = 'Échec du déploiement' + ( record.message ? ' — ' + record.message : '' );
+				text = record.message
+					? /* translators: %s: error message from the deployment service. */
+					  sprintf( __( 'Deployment failed — %s', 'okno' ), record.message )
+					: __( 'Deployment failed', 'okno' );
 				break;
 			default:
 				text = record.status;
@@ -3313,7 +3444,7 @@
 			link.href = record.run_url;
 			link.target = '_blank';
 			link.rel = 'noopener';
-			link.textContent = ' Logs';
+			link.textContent = ' ' + __( 'Logs', 'okno' );
 			banner.appendChild( link );
 		}
 	}
@@ -3428,7 +3559,7 @@
 			els.theme.setAttribute( 'aria-pressed', 'dark' === theme ? 'true' : 'false' );
 			els.theme.setAttribute(
 				'aria-label',
-				'dark' === theme ? 'Passer au thème clair' : 'Passer au thème sombre'
+				'dark' === theme ? __( 'Switch to light theme', 'okno' ) : __( 'Switch to dark theme', 'okno' )
 			);
 		}
 	}

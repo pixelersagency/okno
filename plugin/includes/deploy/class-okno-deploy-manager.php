@@ -53,7 +53,7 @@ class Okno_Deploy_Manager {
 		if ( get_transient( self::TRANSIENT_SAVE ) ) {
 			return new WP_Error(
 				'okno_save_in_progress',
-				__( 'Un enregistrement est en cours, réessayez dans quelques secondes.', 'okno' ),
+				__( 'A save is in progress. Try again in a few seconds.', 'okno' ),
 				array( 'status' => 409 )
 			);
 		}
@@ -63,7 +63,7 @@ class Okno_Deploy_Manager {
 		if ( $active ) {
 			return new WP_Error(
 				'okno_deploy_in_progress',
-				__( 'Un déploiement est déjà en cours.', 'okno' ),
+				__( 'A deployment is already in progress.', 'okno' ),
 				array( 'status' => 409 )
 			);
 		}
@@ -76,7 +76,7 @@ class Okno_Deploy_Manager {
 		if ( $last && $interval > 0 && ( time() - $last['started'] ) < $interval ) {
 			return new WP_Error(
 				'okno_rate_limited',
-				sprintf( __( 'Merci de patienter %d s entre deux déploiements.', 'okno' ), $interval ),
+				sprintf( /* translators: %d: number of seconds. */ __( 'Please wait %d s between deployments.', 'okno' ), $interval ),
 				array( 'status' => 429 )
 			);
 		}
@@ -85,7 +85,7 @@ class Okno_Deploy_Manager {
 		if ( ! $driver ) {
 			return new WP_Error(
 				'okno_deploy_config',
-				__( 'Aucune méthode de déploiement configurée dans les réglages Okno.', 'okno' ),
+				__( 'No deployment method set in Okno settings.', 'okno' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -134,7 +134,7 @@ class Okno_Deploy_Manager {
 	public static function get_status( $deploy_id ) {
 		$history = self::history();
 		if ( ! isset( $history[ $deploy_id ] ) ) {
-			return new WP_Error( 'okno_not_found', __( 'Déploiement inconnu.', 'okno' ), array( 'status' => 404 ) );
+			return new WP_Error( 'okno_not_found', __( 'Unknown deployment.', 'okno' ), array( 'status' => 404 ) );
 		}
 
 		$record = $history[ $deploy_id ];
@@ -174,7 +174,7 @@ class Okno_Deploy_Manager {
 		}
 
 		$record['status']  = 'error';
-		$record['message'] = __( 'Statut introuvable après 30 minutes : déploiement considéré comme perdu.', 'okno' );
+		$record['message'] = __( 'No status after 30 minutes: deployment marked as lost.', 'okno' );
 		return $record;
 	}
 

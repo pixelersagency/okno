@@ -26,7 +26,7 @@ class Okno_Schema {
 	public function get( $post_id ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new WP_Error( 'okno_not_found', __( 'Contenu introuvable.', 'okno' ), array( 'status' => 404 ) );
+			return new WP_Error( 'okno_not_found', __( 'Content not found.', 'okno' ), array( 'status' => 404 ) );
 		}
 
 		$groups = array( $this->native_group( $post ) );
@@ -187,14 +187,14 @@ class Okno_Schema {
 
 		return array(
 			'key'    => 'okno_native',
-			'title'  => __( 'Contenu principal', 'okno' ),
+			'title'  => __( 'Main content', 'okno' ),
 			'source' => 'native',
 			'fields' => array(
 				array(
 					'path'      => self::PATH_TITLE,
 					'key'       => self::PATH_TITLE,
 					'type'      => 'text',
-					'label'     => __( 'Titre', 'okno' ),
+					'label'     => __( 'Title', 'okno' ),
 					'required'  => true,
 					'supported' => true,
 					'source'    => 'native',
@@ -204,7 +204,7 @@ class Okno_Schema {
 					'path'      => self::PATH_THUMBNAIL,
 					'key'       => self::PATH_THUMBNAIL,
 					'type'      => 'image',
-					'label'     => __( 'Image mise en avant', 'okno' ),
+					'label'     => __( 'Featured image', 'okno' ),
 					'required'  => false,
 					'supported' => true,
 					'source'    => 'native',

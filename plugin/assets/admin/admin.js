@@ -1,6 +1,6 @@
 /**
- * Okno — pages d'administration : copie, onglets de code, champs du mode de
- * mise en ligne, vérifications de connexion en direct.
+ * Okno — admin screens: copy buttons, code tabs, publishing mode fields,
+ * live connection checks.
  */
 ( function () {
 	'use strict';
@@ -8,6 +8,7 @@
 	var cfg = window.OknoAdmin || {};
 	var t = cfg.strings || {};
 	var apiFetch = window.wp && window.wp.apiFetch;
+	var __ = window.wp.i18n.__;
 
 	function format( template ) {
 		var args = Array.prototype.slice.call( arguments, 1 );
@@ -16,12 +17,12 @@
 		} );
 	}
 
-	/* ── Copier ─────────────────────────────────────────────────────── */
+	/* ── Copy ───────────────────────────────────────────────────────── */
 
 	function copyText( text, button ) {
 		var done = function () {
 			var label = button.textContent;
-			button.textContent = t.copied || 'Copié';
+			button.textContent = t.copied || __( 'Copied', 'okno' );
 			setTimeout( function () {
 				button.textContent = label;
 			}, 1600 );
@@ -32,7 +33,7 @@
 			return;
 		}
 
-		// Repli : wp-admin servi en HTTP simple, pas d'API presse-papiers.
+		// Fallback: wp-admin served over plain HTTP, no Clipboard API.
 		var area = document.createElement( 'textarea' );
 		area.value = text;
 		area.setAttribute( 'readonly', '' );
@@ -44,7 +45,7 @@
 			document.execCommand( 'copy' );
 			done();
 		} catch ( e ) {
-			/* Rien : le texte reste sélectionnable à la main. */
+			/* Nothing to do: the text can still be selected by hand. */
 		}
 		area.remove();
 	}
@@ -64,7 +65,7 @@
 		}
 	} );
 
-	/* ── Onglets de code (HTML / React) ─────────────────────────────── */
+	/* ── Code tabs (HTML / React) ──────────────────────────────────── */
 
 	document.querySelectorAll( '[data-okno-segmented]' ).forEach( function ( group ) {
 		var buttons = group.querySelectorAll( 'button[data-panel]' );
@@ -86,7 +87,7 @@
 		} );
 	} );
 
-	/* ── Réglages : n'afficher que les champs du mode choisi ────────── */
+	/* ── Settings: only show the fields of the chosen mode ──────────── */
 
 	var radios = document.querySelectorAll( '[data-okno-driver]' );
 	if ( radios.length ) {
@@ -108,7 +109,7 @@
 		syncDriverFields();
 	}
 
-	/* ── Démarrer : vérifications en direct ─────────────────────────── */
+	/* ── Get started: live checks ───────────────────────────────────── */
 
 	function showResult( el, level, message ) {
 		el.hidden = false;
@@ -142,8 +143,8 @@
 	}
 
 	/**
-	 * Test du bridge : on charge le site dans une iframe invisible et on attend
-	 * son handshake. C'est exactement ce que fera l'éditeur.
+	 * Bridge test: load the site in a hidden iframe and wait for its
+	 * handshake. This is exactly what the editor will do.
 	 */
 	var testButton = document.querySelector( '[data-okno-test-bridge]' );
 	var testResult = document.querySelector( '[data-okno-bridge-result]' );

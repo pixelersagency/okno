@@ -27,39 +27,39 @@ class Okno_Github_Preflight {
 		$results = array();
 
 		if ( 'unreadable' === Okno_Secrets::status( self::SECRET_NAME ) ) {
-			return array( self::line( 'error', __( 'PAT GitHub illisible (les salts WordPress ont changé). Re-saisissez-le.', 'okno' ) ) );
+			return array( self::line( 'error', __( 'The GitHub PAT can’t be read (the WordPress salts have changed). Enter it again.', 'okno' ) ) );
 		}
 		$pat = Okno_Secrets::get( self::SECRET_NAME );
 		if ( null === $pat ) {
-			return array( self::line( 'error', __( 'Aucun PAT GitHub configuré.', 'okno' ) ) );
+			return array( self::line( 'error', __( 'No GitHub PAT set.', 'okno' ) ) );
 		}
 		if ( '' === $repo || '' === $branch ) {
-			return array( self::line( 'error', __( 'Dépôt et branche sont requis.', 'okno' ) ) );
+			return array( self::line( 'error', __( 'Repository and branch are required.', 'okno' ) ) );
 		}
 
 		// 1. Dépôt : valide le PAT et l'accès en une requête.
 		$repo_res = self::request( $pat, sprintf( '/repos/%s', $repo ) );
 		if ( is_wp_error( $repo_res ) ) {
-			return array( self::line( 'error', sprintf( __( 'GitHub injoignable : %s', 'okno' ), $repo_res->get_error_message() ) ) );
+			return array( self::line( 'error', sprintf( /* translators: %s: error message. */ __( 'Can’t reach GitHub: %s', 'okno' ), $repo_res->get_error_message() ) ) );
 		}
 
 		$code = wp_remote_retrieve_response_code( $repo_res );
 		if ( 401 === $code ) {
-			return array( self::line( 'error', __( 'PAT GitHub refusé (401) : token invalide, révoqué ou expiré.', 'okno' ) ) );
+			return array( self::line( 'error', __( 'GitHub rejected the PAT (401): the token is invalid, revoked or expired.', 'okno' ) ) );
 		}
 		if ( 404 === $code ) {
 			return array(
 				self::line(
 					'error',
-					sprintf( __( 'Dépôt « %s » introuvable : il n’existe pas, ou le PAT ne lui donne pas accès (un PAT fine-grained doit lister ce dépôt explicitement).', 'okno' ), $repo )
+					sprintf( /* translators: %s: repository (owner/name). */ __( 'Repository “%s” not found: it doesn’t exist, or the PAT has no access to it (a fine-grained PAT must list this repository explicitly).', 'okno' ), $repo )
 				),
 			);
 		}
 		if ( 200 !== $code ) {
-			return array( self::line( 'error', sprintf( __( 'GitHub a répondu %d sur le dépôt.', 'okno' ), $code ) ) );
+			return array( self::line( 'error', sprintf( /* translators: %d: HTTP status code. */ __( 'GitHub responded with %d for the repository.', 'okno' ), $code ) ) );
 		}
 
-		$results[] = self::line( 'ok', sprintf( __( 'Dépôt « %s » accessible.', 'okno' ), $repo ) );
+		$results[] = self::line( 'ok', sprintf( /* translators: %s: repository (owner/name). */ __( 'Repository “%s” is accessible.', 'okno' ), $repo ) );
 
 		$expiry = self::expiry_line( $repo_res );
 		if ( $expiry ) {
@@ -69,9 +69,9 @@ class Okno_Github_Preflight {
 		// 2. Branche.
 		$branch_res = self::request( $pat, sprintf( '/repos/%s/branches/%s', $repo, rawurlencode( $branch ) ) );
 		if ( ! is_wp_error( $branch_res ) && 200 === wp_remote_retrieve_response_code( $branch_res ) ) {
-			$results[] = self::line( 'ok', sprintf( __( 'Branche « %s » trouvée.', 'okno' ), $branch ) );
+			$results[] = self::line( 'ok', sprintf( /* translators: %s: branch name. */ __( 'Branch “%s” found.', 'okno' ), $branch ) );
 		} else {
-			$results[] = self::line( 'error', sprintf( __( 'Branche « %s » introuvable sur ce dépôt.', 'okno' ), $branch ) );
+			$results[] = self::line( 'error', sprintf( /* translators: %s: branch name. */ __( 'Branch “%s” not found in this repository.', 'okno' ), $branch ) );
 		}
 
 		// 3. Workflow (driver github uniquement).
@@ -106,7 +106,7 @@ class Okno_Github_Preflight {
 	private static function check_workflow( $pat, $repo, $workflow ) {
 		$res = self::request( $pat, sprintf( '/repos/%s/actions/workflows?per_page=100', $repo ) );
 		if ( is_wp_error( $res ) || 200 !== wp_remote_retrieve_response_code( $res ) ) {
-			return self::line( 'warning', __( 'Impossible de lister les workflows du dépôt (permission Actions manquante ?).', 'okno' ) );
+			return self::line( 'warning', __( 'Can’t list the repository’s workflows (missing Actions permission?).', 'okno' ) );
 		}
 
 		$body      = json_decode( wp_remote_retrieve_body( $res ), true );
@@ -121,20 +121,20 @@ class Okno_Github_Preflight {
 			$names[] = $file;
 			if ( $file === $workflow || ( isset( $item['name'] ) && $item['name'] === $workflow ) ) {
 				if ( isset( $item['state'] ) && 'active' !== $item['state'] ) {
-					return self::line( 'warning', sprintf( __( 'Workflow « %1$s » trouvé mais désactivé (état : %2$s).', 'okno' ), $workflow, $item['state'] ) );
+					return self::line( 'warning', sprintf( /* translators: 1: workflow file, 2: workflow state. */ __( 'Workflow “%1$s” found but disabled (state: %2$s).', 'okno' ), $workflow, $item['state'] ) );
 				}
-				return self::line( 'ok', sprintf( __( 'Workflow « %s » trouvé et actif.', 'okno' ), $workflow ) );
+				return self::line( 'ok', sprintf( __( 'Workflow “%s” found and active.', 'okno' ), $workflow ) );
 			}
 		}
 
 		if ( empty( $names ) ) {
-			return self::line( 'error', sprintf( __( 'Ce dépôt ne contient aucun workflow GitHub Actions : « %s » ne pourra jamais être déclenché.', 'okno' ), $workflow ) );
+			return self::line( 'error', sprintf( /* translators: %s: workflow file. */ __( 'This repository has no GitHub Actions workflows: “%s” can never be triggered.', 'okno' ), $workflow ) );
 		}
 
 		return self::line(
 			'error',
 			sprintf(
-				__( 'Workflow « %1$s » introuvable. Workflows disponibles : %2$s.', 'okno' ),
+				/* translators: 1: workflow file, 2: comma-separated list of workflows. */ __( 'Workflow “%1$s” not found. Available workflows: %2$s.', 'okno' ),
 				$workflow,
 				implode( ', ', $names )
 			)
@@ -158,12 +158,12 @@ class Okno_Github_Preflight {
 		$days = (int) floor( ( $timestamp - time() ) / DAY_IN_SECONDS );
 
 		if ( $days < 0 ) {
-			return self::line( 'error', sprintf( __( 'Le PAT a expiré le %s.', 'okno' ), $date ) );
+			return self::line( 'error', sprintf( /* translators: %s: date. */ __( 'The PAT expired on %s.', 'okno' ), $date ) );
 		}
 		if ( $days <= 14 ) {
-			return self::line( 'warning', sprintf( __( 'Le PAT expire le %1$s (dans %2$d jours).', 'okno' ), $date, $days ) );
+			return self::line( 'warning', sprintf( /* translators: 1: date, 2: number of days. */ _n( 'The PAT expires on %1$s (in %2$d day).', 'The PAT expires on %1$s (in %2$d days).', $days, 'okno' ), $date, $days ) );
 		}
-		return self::line( 'ok', sprintf( __( 'PAT valide jusqu’au %s.', 'okno' ), $date ) );
+		return self::line( 'ok', sprintf( /* translators: %s: date. */ __( 'PAT valid until %s.', 'okno' ), $date ) );
 	}
 
 	private static function line( $level, $message ) {

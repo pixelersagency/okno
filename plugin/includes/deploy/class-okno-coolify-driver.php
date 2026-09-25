@@ -20,16 +20,16 @@ class Okno_Coolify_Driver implements Okno_Deploy_Driver_Interface {
 	public function check_config() {
 		$settings = Okno_Plugin::settings();
 		if ( '' === $settings['coolify_url'] ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Aucune URL de webhook Coolify configurée.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'No Coolify webhook URL set.', 'okno' ) );
 		}
 		if ( 'unreadable' === Okno_Secrets::status( self::SECRET_NAME ) ) {
 			return new WP_Error(
 				'okno_secret_unreadable',
-				__( 'Le token Coolify est illisible (les salts WordPress ont probablement changé). Re-saisissez-le dans les réglages Okno.', 'okno' )
+				__( 'The Coolify token can’t be read (the WordPress salts have probably changed). Enter it again in Okno settings.', 'okno' )
 			);
 		}
 		if ( null === Okno_Secrets::get( self::SECRET_NAME ) ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Aucun token Coolify configuré.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'No Coolify token set.', 'okno' ) );
 		}
 		return true;
 	}
@@ -58,7 +58,7 @@ class Okno_Coolify_Driver implements Okno_Deploy_Driver_Interface {
 		if ( $code < 200 || $code >= 300 ) {
 			return new WP_Error(
 				'okno_deploy_failed',
-				sprintf( __( 'Coolify a répondu %d.', 'okno' ), $code )
+				sprintf( /* translators: %d: HTTP status code. */ __( 'Coolify responded with %d.', 'okno' ), $code )
 			);
 		}
 

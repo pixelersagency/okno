@@ -35,6 +35,20 @@ cd bridge && npm run build
 
 To try the editor, symlink `plugin/` into `wp-content/plugins/okno` on a local WordPress with ACF, and run one of the `examples/` next to it.
 
+## Translations
+
+User-facing strings are written in English and wrapped in WordPress i18n functions (`__()`, `esc_html_e()`… in PHP, `wp.i18n.__()` in JavaScript, text domain `okno`). The French translation lives in `plugin/languages/okno-fr_FR.po`.
+
+After adding or changing a string, run:
+
+```bash
+python3 scripts/i18n.py
+```
+
+It extracts every string into `okno.pot`, updates the French `.po` (new strings appear with an empty translation), and rebuilds the `.mo` and the JSON files used by the scripts. Fill in the French in the `.po` (by hand or with Poedit), then run it again. CI fails if a string has no French translation. Requires GNU gettext (`brew install gettext`, `apt install gettext`).
+
+To add a language, copy `okno-fr_FR.po` to `okno-<locale>.po`, translate it, and add the locale to `scripts/i18n.py`.
+
 ## Conventions
 
 - WordPress coding standards for PHP (tabs, spaces inside parentheses, Yoda conditions).

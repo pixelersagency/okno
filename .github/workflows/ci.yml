@@ -44,6 +44,10 @@ jobs:
         run: npm run build
       - name: Built files are committed
         run: git diff --exit-code -- bridge/dist plugin/assets/bridge
+      - name: Translations are complete and up to date
+        run: |
+          sudo apt-get install -y -qq gettext > /dev/null
+          python3 scripts/i18n.py --check
       - name: Syntax
         run: |
           node --check plugin/assets/admin/editor.js

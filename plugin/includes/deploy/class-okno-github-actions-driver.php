@@ -21,16 +21,16 @@ class Okno_Github_Actions_Driver implements Okno_Deploy_Driver_Interface {
 	public function check_config() {
 		$settings = Okno_Plugin::settings();
 		if ( '' === $settings['gh_repo'] || '' === $settings['gh_workflow'] || '' === $settings['gh_branch'] ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Configuration GitHub incomplète (repo, workflow, branche).', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'Incomplete GitHub settings (repository, workflow, branch).', 'okno' ) );
 		}
 		if ( 'unreadable' === Okno_Secrets::status( self::SECRET_NAME ) ) {
 			return new WP_Error(
 				'okno_secret_unreadable',
-				__( 'Le PAT GitHub est illisible (les salts WordPress ont probablement changé). Re-saisissez-le dans les réglages Okno.', 'okno' )
+				__( 'The GitHub PAT can’t be read (the WordPress salts have probably changed). Enter it again in Okno settings.', 'okno' )
 			);
 		}
 		if ( null === Okno_Secrets::get( self::SECRET_NAME ) ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Aucun PAT GitHub configuré.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'No GitHub PAT set.', 'okno' ) );
 		}
 		return true;
 	}
@@ -61,25 +61,25 @@ class Okno_Github_Actions_Driver implements Okno_Deploy_Driver_Interface {
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( 204 !== $code ) {
 			$body = json_decode( wp_remote_retrieve_body( $response ), true );
-			$raw  = isset( $body['message'] ) ? $body['message'] : sprintf( __( 'GitHub a répondu %d.', 'okno' ), $code );
+			$raw  = isset( $body['message'] ) ? $body['message'] : sprintf( /* translators: %d: HTTP status code. */ __( 'GitHub responded with %d.', 'okno' ), $code );
 
 			// Le « Not Found » brut de GitHub n'aide personne : on dit quoi vérifier.
 			switch ( $code ) {
 				case 404:
 					$message = sprintf(
-						__( 'GitHub n’a pas trouvé le workflow « %1$s » sur %2$s (ou le PAT n’a pas accès à ce dépôt). Ouvrez les réglages Okno et enregistrez-les pour lancer le contrôle de configuration.', 'okno' ),
+						/* translators: 1: workflow file, 2: repository (owner/name). */ __( 'GitHub couldn’t find the workflow “%1$s” in %2$s (or the PAT has no access to this repository). Open Okno settings and save them to run the configuration check.', 'okno' ),
 						$settings['gh_workflow'],
 						$settings['gh_repo']
 					);
 					break;
 				case 401:
-					$message = __( 'PAT GitHub refusé : token invalide, révoqué ou expiré. Re-saisissez-le dans les réglages Okno.', 'okno' );
+					$message = __( 'GitHub rejected the PAT: the token is invalid, revoked or expired. Enter it again in Okno settings.', 'okno' );
 					break;
 				case 403:
-					$message = sprintf( __( 'GitHub a refusé la requête (403) : le PAT n’a probablement pas la permission « Actions: write ». Détail : %s', 'okno' ), $raw );
+					$message = sprintf( /* translators: %s: error message from GitHub. */ __( 'GitHub refused the request (403): the PAT probably lacks the “Actions: write” permission. Details: %s', 'okno' ), $raw );
 					break;
 				case 422:
-					$message = sprintf( __( 'GitHub a rejeté le déclenchement (422) : la branche « %1$s » n’existe pas, ou le workflow n’accepte pas workflow_dispatch. Détail : %2$s', 'okno' ), $settings['gh_branch'], $raw );
+					$message = sprintf( /* translators: 1: branch name, 2: error message from GitHub. */ __( 'GitHub rejected the trigger (422): the branch “%1$s” doesn’t exist, or the workflow doesn’t accept workflow_dispatch. Details: %2$s', 'okno' ), $settings['gh_branch'], $raw );
 					break;
 				default:
 					$message = $raw;
@@ -120,8 +120,8 @@ class Okno_Github_Actions_Driver implements Okno_Deploy_Driver_Interface {
 		if ( 'completed' === $run['status'] ) {
 			$record['status']  = ( 'success' === $run['conclusion'] ) ? 'success' : 'error';
 			$record['message'] = ( 'success' === $run['conclusion'] )
-				? __( 'Déploiement terminé.', 'okno' )
-				: sprintf( __( 'Le workflow a échoué (%s).', 'okno' ), (string) $run['conclusion'] );
+				? __( 'Deployment complete.', 'okno' )
+				: sprintf( /* translators: %s: GitHub run conclusion. */ __( 'The workflow failed (%s).', 'okno' ), (string) $run['conclusion'] );
 		} else {
 			$record['status'] = 'building'; // queued | in_progress.
 		}
@@ -200,7 +200,7 @@ class Okno_Github_Actions_Driver implements Okno_Deploy_Driver_Interface {
 	private function request( $method, $path, $body = null ) {
 		$pat = Okno_Secrets::get( self::SECRET_NAME );
 		if ( null === $pat ) {
-			return new WP_Error( 'okno_secret_unreadable', __( 'PAT GitHub absent ou illisible.', 'okno' ) );
+			return new WP_Error( 'okno_secret_unreadable', __( 'GitHub PAT missing or unreadable.', 'okno' ) );
 		}
 
 		$args = array(

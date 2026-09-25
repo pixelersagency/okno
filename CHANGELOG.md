@@ -2,6 +2,19 @@
 
 All notable changes to Okno are documented here. The project follows [Semantic Versioning](https://semver.org/). The plugin and the bridge package share one version number.
 
+## [1.0.0-beta.3] — 2026-09-25
+
+### Changed
+
+- The interface is now in English, with a complete French translation shipped in `plugin/languages/`. Okno follows the language of the WordPress site (or of the user's profile).
+- Every string goes through WordPress i18n (`__()` in PHP, `wp.i18n` in the editor), so Okno can be translated into any language. See CONTRIBUTING.md.
+- The coding-agent guide (`docs/agent-instructions.md`) is in English; French sites get `agent-instructions.fr.md`.
+- Dates and numbers in the editor follow the site locale.
+
+### Bridge
+
+- The bridge no longer sends French default labels: managed regions send their provider and auto-detected sections send their kind (`auto: 'header' | 'footer' | 'section'`), and the editor writes the label in the editor's language. Sites on an older bridge keep their French labels.
+
 ## [1.0.0-beta.2] — 2026-09-25
 
 ### Changed
@@ -35,5 +48,6 @@ First public release.
 - Managed regions (`data-okno-managed`) explain where to edit content Okno doesn't own.
 - Explicit sections (`data-okno-section`, `data-okno-layout`) take precedence over auto-detected ones.
 
+[1.0.0-beta.3]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.1

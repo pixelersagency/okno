@@ -27,16 +27,16 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 	public function check_config() {
 		$settings = Okno_Plugin::settings();
 		if ( '' === $settings['gh_repo'] || '' === $settings['gh_branch'] ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Configuration GitHub incomplète (repo, branche).', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'Incomplete GitHub settings (repository, branch).', 'okno' ) );
 		}
 		if ( 'unreadable' === Okno_Secrets::status( self::SECRET_NAME ) ) {
 			return new WP_Error(
 				'okno_secret_unreadable',
-				__( 'Le PAT GitHub est illisible (les salts WordPress ont probablement changé). Re-saisissez-le dans les réglages Okno.', 'okno' )
+				__( 'The GitHub PAT can’t be read (the WordPress salts have probably changed). Enter it again in Okno settings.', 'okno' )
 			);
 		}
 		if ( null === Okno_Secrets::get( self::SECRET_NAME ) ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Aucun PAT GitHub configuré.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'No GitHub PAT set.', 'okno' ) );
 		}
 		return true;
 	}
@@ -53,7 +53,7 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 		}
 		$head_sha = isset( $ref['object']['sha'] ) ? $ref['object']['sha'] : '';
 		if ( '' === $head_sha ) {
-			return new WP_Error( 'okno_deploy_failed', __( 'Branche introuvable sur GitHub.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_failed', __( 'Branch not found on GitHub.', 'okno' ) );
 		}
 
 		// 2. Tree du commit courant.
@@ -63,13 +63,13 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 		}
 		$tree_sha = isset( $head['tree']['sha'] ) ? $head['tree']['sha'] : '';
 		if ( '' === $tree_sha ) {
-			return new WP_Error( 'okno_deploy_failed', __( 'Commit HEAD illisible.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_failed', __( 'Can’t read the HEAD commit.', 'okno' ) );
 		}
 
 		// 3. Commit vide (même tree) portant la trace de la publication.
 		$user    = wp_get_current_user();
 		$message = sprintf(
-			"chore(okno): publication du contenu\n\nDéclenchée depuis WordPress par %s.",
+			"chore(okno): publish content\n\nTriggered from WordPress by %s.",
 			$user->display_name
 		);
 		$commit  = $this->request(
@@ -85,7 +85,7 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 			return $commit;
 		}
 		if ( empty( $commit['sha'] ) ) {
-			return new WP_Error( 'okno_deploy_failed', __( 'La création du commit a échoué.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_failed', __( 'Couldn’t create the commit.', 'okno' ) );
 		}
 
 		// 4. Avance de la branche → le pipeline de l'hébergeur prend le relais.
@@ -120,7 +120,7 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 	private function request( $method, $path, $body = null ) {
 		$pat = Okno_Secrets::get( self::SECRET_NAME );
 		if ( null === $pat ) {
-			return new WP_Error( 'okno_secret_unreadable', __( 'PAT GitHub absent ou illisible.', 'okno' ) );
+			return new WP_Error( 'okno_secret_unreadable', __( 'GitHub PAT missing or unreadable.', 'okno' ) );
 		}
 
 		$args = array(
@@ -149,7 +149,7 @@ class Okno_Github_Commit_Driver implements Okno_Deploy_Driver_Interface {
 		if ( $code < 200 || $code >= 300 ) {
 			$message = isset( $data['message'] )
 				? $data['message']
-				: sprintf( __( 'GitHub a répondu %d.', 'okno' ), $code );
+				: sprintf( /* translators: %d: HTTP status code. */ __( 'GitHub responded with %d.', 'okno' ), $code );
 			return new WP_Error( 'okno_deploy_failed', $message );
 		}
 

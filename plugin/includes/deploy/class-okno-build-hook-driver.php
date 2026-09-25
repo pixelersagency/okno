@@ -18,7 +18,7 @@ class Okno_Build_Hook_Driver implements Okno_Deploy_Driver_Interface {
 	public function check_config() {
 		$settings = Okno_Plugin::settings();
 		if ( '' === $settings['build_hook_url'] ) {
-			return new WP_Error( 'okno_deploy_config', __( 'Aucune URL de build hook configurée.', 'okno' ) );
+			return new WP_Error( 'okno_deploy_config', __( 'No build hook URL set.', 'okno' ) );
 		}
 		return true;
 	}
@@ -43,7 +43,7 @@ class Okno_Build_Hook_Driver implements Okno_Deploy_Driver_Interface {
 		if ( $code < 200 || $code >= 300 ) {
 			return new WP_Error(
 				'okno_deploy_failed',
-				sprintf( __( 'Le build hook a répondu %d.', 'okno' ), $code )
+				sprintf( /* translators: %d: HTTP status code. */ __( 'The build hook responded with %d.', 'okno' ), $code )
 			);
 		}
 

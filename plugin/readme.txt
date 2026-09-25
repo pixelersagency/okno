@@ -4,7 +4,7 @@ Tags: headless, acf, visual editor, nextjs, astro
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0-beta.2
+Stable tag: 1.0.0-beta.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,15 +21,13 @@ Okno loads your headless front end (Next.js, Astro, Remix, Vite, Nuxt, SvelteKit
 * Publishing modes: live content, build hook (Vercel, Netlify, Cloudflare Pages), GitHub Actions with live status, publish commit, Coolify.
 * No public endpoint and no secret on the front end.
 
-The admin interface is currently in French.
-
 Documentation, framework examples and the bridge package: https://github.com/pixelersagency/okno
 
 == Installation ==
 
 1. Upload the plugin zip in Plugins → Add New → Upload Plugin, then activate it.
 2. Install Advanced Custom Fields (free or Pro).
-3. Open Okno → Démarrer and follow the steps: front-end address, frame-ancestors header, bridge script, connection test.
+3. Open Okno → Get started and follow the steps: front-end address, frame-ancestors header, bridge script, connection test.
 
 == Frequently Asked Questions ==
 
@@ -46,6 +44,9 @@ No. Everything is saved to your existing ACF fields and post data.
 Okno removes its own settings, tokens, history table and internal post meta. Your content and ACF fields are left untouched.
 
 == Changelog ==
+
+= 1.0.0-beta.3 =
+* The interface is now in English, with a French translation included. It follows the WordPress site language.
 
 = 1.0.0-beta.2 =
 * New visual identity in Pixelers colours.

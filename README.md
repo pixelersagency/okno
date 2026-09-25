@@ -6,7 +6,7 @@
 
 [Français](README.fr.md) · [Changelog](CHANGELOG.md) · [Bridge package](bridge/) · [Framework examples](examples/)
 
-> **Status: 1.0 beta.** The admin interface is in French for now (menu names below are given as *French label* (English)); English translations are on the roadmap.
+> **Status: 1.0 beta.** The interface is in English and French (it follows the WordPress site language).
 
 ---
 
@@ -49,11 +49,11 @@ Headless WordPress gives developers a modern front end, but it takes the "what y
 
 ### 2. Point it at your site
 
-**Okno → Réglages** (Settings): your front-end URL, the post types editors may open, and the URL pattern for each one (`/{slug}` by default; the front page maps to `/`).
+**Okno → Settings**: your front-end URL, the post types editors may open, and the URL pattern for each one (`/{slug}` by default; the front page maps to `/`).
 
 ### 3. Allow wp-admin to frame your site
 
-Send this header from your front end (**Okno → Démarrer** (Get started) shows it with your domain filled in, and checks it for you):
+Send this header from your front end (**Okno → Get started** shows it with your domain filled in, and checks it for you):
 
 ```
 Content-Security-Policy: frame-ancestors 'self' https://your-wordpress.example
@@ -74,7 +74,7 @@ import { OknoBridge } from '@pixelersagency/okno-bridge/react';
 <OknoBridge wpOrigin="https://your-wordpress.example" />
 ```
 
-**Any other site (Astro, Nuxt, SvelteKit, HTML)**: copy `okno-bridge.js` (downloadable from **Okno → Démarrer**) to your public folder and add to `<head>`:
+**Any other site (Astro, Nuxt, SvelteKit, HTML)**: copy `okno-bridge.js` (downloadable from **Okno → Get started**) to your public folder and add to `<head>`:
 
 ```html
 <script>
@@ -98,9 +98,9 @@ Then annotate what should be editable:
 </main>
 ```
 
-Back in wp-admin, **Okno → Démarrer → Tester la connexion** confirms that the bridge answers. You're done. Step-by-step setups for each framework are in [`examples/`](examples/).
+Back in wp-admin, **Okno → Get started → Test the connection** confirms that the bridge answers. You're done. Step-by-step setups for each framework are in [`examples/`](examples/).
 
-> **Using a coding agent?** **Okno → Démarrer** gives you ready-to-paste prompts and the full integration contract ([`plugin/docs/agent-instructions.md`](plugin/docs/agent-instructions.md)) for Claude Code, Cursor, Codex and the like.
+> **Using a coding agent?** **Okno → Get started** gives you ready-to-paste prompts and the full integration contract ([`plugin/docs/agent-instructions.md`](plugin/docs/agent-instructions.md)) for Claude Code, Cursor, Codex and the like.
 
 ## Annotations
 

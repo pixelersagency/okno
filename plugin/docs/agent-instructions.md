@@ -1,49 +1,48 @@
-# Okno — instructions pour l'agent qui construit ou intègre le site
+# Okno — instructions for the agent building or integrating the site
 
-## Ton rôle
+## Your role
 
-Tu construis, ou tu adaptes, le front d'un site dont le contenu vit dans WordPress
-(champs ACF et champs natifs). Le front peut être écrit avec n'importe quelle technologie :
-React, Next.js, Remix, Vite, Astro, Nuxt, SvelteKit, ou du HTML généré.
+You are building, or adapting, the front end of a site whose content lives in WordPress
+(ACF fields and native fields). The front end can use any technology:
+React, Next.js, Remix, Vite, Astro, Nuxt, SvelteKit, or generated HTML.
 
-Okno donne au client une édition visuelle de ce front depuis wp-admin : il voit son vrai
-site dans une iframe, clique sur un texte ou une image, modifie la valeur, voit le
-résultat immédiatement, puis enregistre. Pour que ça fonctionne, le front doit respecter
-le contrat ci-dessous **dès le premier composant**.
+Okno gives the client visual editing of this front end from wp-admin: they see their real
+site in an iframe, click a text or an image, change the value, see the result instantly,
+then save. For this to work, the front end must follow the contract below **from the very
+first component**.
 
-Répartition des rôles :
+Division of responsibilities:
 
-- **WordPress** possède le contenu : pages, champs ACF, médias, menus.
-- **Le front** possède la mise en page, le style, le comportement, et affiche le contenu
-  qu'il lit dans WordPress (API REST, WPGraphQL, ou export au build).
-- **Okno** relie les deux : il lit les annotations posées par le front, et écrit les
-  modifications du client dans les champs WordPress existants. Il ne stocke aucun contenu
-  à lui.
+- **WordPress** owns the content: pages, ACF fields, media, menus.
+- **The front end** owns layout, styling and behavior, and displays the content it reads
+  from WordPress (REST API, WPGraphQL, or export at build time).
+- **Okno** connects the two: it reads the annotations placed by the front end, and writes
+  the client’s changes to the existing WordPress fields. It stores no content of its own.
 
-## Règles non négociables
+## Non-negotiable rules
 
-1. Chaque valeur visible par un visiteur a **un seul propriétaire** : un champ WordPress.
-   Pas de texte en dur dans les composants, sauf ce qui relève de l'interface (libellés
-   d'accessibilité, icônes décoratives).
-2. Chaque élément qui affiche un champ porte `data-wp-field` avec le **chemin exact** du
-   champ, à l'intérieur d'un conteneur `data-wp-post` qui porte l'ID du contenu.
-3. **Ne conditionne jamais le rendu d'un élément annoté à la présence de sa valeur.**
-   `{titre && <h2>…</h2>}` est interdit : un élément absent du HTML ne peut pas être
-   rempli par l'aperçu, et le client ne peut plus jamais saisir ce champ. Rends
-   l'élément vide, masque-le en CSS si nécessaire (`:empty`).
-4. Les noms de champs sont **stables**. Renommer un champ ACF déconnecte le contenu déjà
-   saisi. Nouveau contenu = nouveau champ.
-5. La mise en page ne se modifie jamais depuis un champ : pas de classes, de tailles, de
-   couleurs ou de HTML de structure stockés dans ACF.
-6. Le site doit fonctionner **sans Okno** : le bridge ne se charge que dans l'éditeur,
-   les annotations sont de simples attributs `data-*` ignorés par les visiteurs.
+1. Every value a visitor can see has **exactly one owner**: a WordPress field.
+   No hardcoded text in components, except interface text (accessibility labels,
+   decorative icons).
+2. Every element that displays a field carries `data-wp-field` with the **exact path** of
+   the field, inside a `data-wp-post` container that carries the content ID.
+3. **Never make the rendering of an annotated element conditional on its value being present.**
+   `{title && <h2>…</h2>}` is forbidden: an element missing from the HTML cannot be filled
+   by the preview, and the client can never enter that field again. Render the element
+   empty, and hide it with CSS if needed (`:empty`).
+4. Field names are **stable**. Renaming an ACF field disconnects the content already
+   entered. New content = new field.
+5. Layout is never controlled from a field: no classes, sizes, colors or structural HTML
+   stored in ACF.
+6. The site must work **without Okno**: the bridge only loads inside the editor, and the
+   annotations are plain `data-*` attributes that visitors ignore.
 
-## Installer le bridge
+## Install the bridge
 
-Le bridge n'est actif que dans l'iframe de l'éditeur. Ne le charge **jamais** pour les
-visiteurs : il ne leur sert à rien.
+The bridge is only active inside the editor iframe. **Never** load it for visitors: it is
+of no use to them.
 
-HTML, Astro, Nuxt, SvelteKit, tout site rendu côté serveur — dans le `<head>` du layout :
+HTML, Astro, Nuxt, SvelteKit, any server-rendered site — in the `<head>` of the layout:
 
 ```html
 <script>
@@ -56,10 +55,10 @@ HTML, Astro, Nuxt, SvelteKit, tout site rendu côté serveur — dans le `<head>
 </script>
 ```
 
-Copie `okno-bridge.js` (fourni par le paquet `@pixelersagency/okno-bridge`, dossier `dist/`) dans le
-dossier public du site.
+Copy `okno-bridge.js` (shipped in the `@pixelersagency/okno-bridge` package, `dist/` folder)
+to the site’s public folder.
 
-React, Next.js, Remix, Vite — une fois, dans le layout racine :
+React, Next.js, Remix, Vite — once, in the root layout:
 
 ```jsx
 import { OknoBridge } from '@pixelersagency/okno-bridge/react';
@@ -74,129 +73,129 @@ export default function RootLayout({ children }) {
 }
 ```
 
-Autorise ensuite wp-admin à afficher le site dans une iframe, par un en-tête HTTP du front :
+Then allow wp-admin to display the site in an iframe, with an HTTP header sent by the front end:
 
 ```
 Content-Security-Policy: frame-ancestors 'self' https://ADRESSE-DU-WORDPRESS
 ```
 
-Ne pose pas `X-Frame-Options: DENY` ou `SAMEORIGIN` : il bloquerait l'éditeur.
+Do not send `X-Frame-Options: DENY` or `SAMEORIGIN`: it would block the editor.
 
-## Annoter les contenus
+## Annotate the content
 
 ```jsx
 <section data-wp-post={page.id} data-okno-section="Hero">
-  <h1 data-wp-field="hero_titre">{page.acf.hero_titre}</h1>
+  <h1 data-wp-field="hero_title">{page.acf.hero_title}</h1>
   <div data-wp-field="hero_intro" data-okno-apply="html"
        dangerouslySetInnerHTML={{ __html: page.acf.hero_intro }} />
   <img data-wp-field="hero_image" src={page.acf.hero_image.url} alt={page.acf.hero_image.alt} />
 </section>
 ```
 
-| Attribut | Rôle |
+| Attribute | Purpose |
 |---|---|
-| `data-wp-post="12"` | Conteneur : ID du contenu WordPress auquel appartiennent les champs dedans |
-| `data-wp-field="chemin"` | Élément qui affiche ce champ |
-| `data-okno-apply="html"` | La valeur contient du balisage (un `<span>` d'accent dans un titre, un wysiwyg) |
-| `data-okno-section="Libellé"` | Nom de la section dans l'arbre de structure de l'éditeur |
-| `data-okno-layout="sections.2"` | La section est la ligne 2 du flexible content `sections` : le client peut l'ajouter, la déplacer, la dupliquer, la supprimer |
-| `data-okno-refresh="save"` | Pas d'aperçu instantané : l'éditeur recharge la page après enregistrement (rendu complexe) |
-| `data-okno-managed="menu"` | Contenu géré ailleurs (menu, liste d'articles, produit WooCommerce) |
-| `data-okno-managed-label="…"` | Texte affiché au client pour ce contenu géré ailleurs |
-| `data-okno-edit-url="…"` | Écran de wp-admin où le modifier (doit être sur l'adresse de wp-admin) |
+| `data-wp-post="12"` | Container: ID of the WordPress content that the fields inside it belong to |
+| `data-wp-field="path"` | Element that displays this field |
+| `data-okno-apply="html"` | The value contains markup (an accent `<span>` in a heading, a WYSIWYG field) |
+| `data-okno-section="Label"` | Name of the section in the editor’s structure tree |
+| `data-okno-layout="sections.2"` | The section is row 2 of the `sections` flexible content: the client can add, move, duplicate and delete it |
+| `data-okno-refresh="save"` | No instant preview: the editor reloads the page after saving (complex rendering) |
+| `data-okno-managed="menu"` | Content managed elsewhere (menu, post list, WooCommerce product) |
+| `data-okno-managed-label="…"` | Text shown to the client for this content managed elsewhere |
+| `data-okno-edit-url="…"` | wp-admin screen where it is edited (must be on the wp-admin address) |
 
-### Chemins
+### Paths
 
-- Champ simple : `hero_titre`
-- Ligne d'un repeater ou d'un flexible content : `cartes.0.titre`, `sections.2.intro`
-- Sous-champ d'un group : `coordonnees.telephone`
-- Champs natifs : `_title` (titre du contenu), `_thumbnail` (image mise en avant)
+- Simple field: `hero_title`
+- Row of a repeater or a flexible content: `cards.0.title`, `sections.2.intro`
+- Sub-field of a group: `contact.phone`
+- Native fields: `_title` (content title), `_thumbnail` (featured image)
 
-Le chemin d'un élément de liste utilise l'**index de rendu** : dans un `map`, construis-le
-avec l'index de la boucle, pas avec un identifiant.
+The path of a list item uses the **render index**: in a `map`, build it from the loop
+index, not from an identifier.
 
 ```jsx
-{page.acf.cartes.map((carte, i) => (
+{page.acf.cards.map((card, i) => (
   <article key={i}>
-    <h3 data-wp-field={`cartes.${i}.titre`}>{carte.titre}</h3>
+    <h3 data-wp-field={`cards.${i}.title`}>{card.title}</h3>
   </article>
 ))}
 ```
 
-### Un élément = une valeur
+### One element = one value
 
-Le bridge écrit la valeur dans l'élément annoté. Pose `data-wp-field` sur l'élément qui
-contient **directement** la valeur, pas sur un parent qui contient aussi de la mise en
-page. Si un titre a besoin d'un mot mis en avant, ne découpe pas le titre en deux champs :
-stocke le balisage dans le champ et annote avec `data-okno-apply="html"`.
+The bridge writes the value into the annotated element. Put `data-wp-field` on the element
+that **directly** contains the value, not on a parent that also contains layout. If a
+heading needs a highlighted word, do not split the heading into two fields: store the
+markup in the field and annotate with `data-okno-apply="html"`.
 
 ### Images
 
-Toute image de contenu vient de la médiathèque WordPress, via un champ image ACF ou
-l'image mise en avant. Chaque emplacement d'image a un **format fixé par la mise en page** :
+Every content image comes from the WordPress media library, through an ACF image field or
+the featured image. Every image slot has an **aspect ratio fixed by the layout**:
 
 ```css
 .hero__media { aspect-ratio: 3 / 2; overflow: hidden; }
 .hero__media img { width: 100%; height: 100%; object-fit: cover; }
 ```
 
-Remplacer une image par une autre de format différent ne doit jamais changer la taille du
-composant. L'éditeur prévient le client quand l'image choisie sera fortement recadrée.
+Replacing an image with another of a different aspect ratio must never change the size of
+the component. The editor warns the client when the chosen image will be heavily cropped.
 
-### Composer une page
+### Page composition
 
-Une page que le client doit pouvoir composer (ajouter une FAQ, déplacer un bloc) est un
-champ **flexible content** ACF. Chaque layout du flexible correspond à un composant du front.
-Annote chaque bloc rendu avec `data-okno-layout="nom_du_champ.index"` et
-`data-okno-section="Libellé lisible"`.
+A page the client must be able to compose (add an FAQ, move a block) is an ACF
+**flexible content** field. Each layout of the flexible content maps to one front-end
+component. Annotate each rendered block with `data-okno-layout="field_name.index"` and
+`data-okno-section="Readable label"`.
 
-### Contenu géré ailleurs
+### Content managed elsewhere
 
-Menus WordPress, listes d'articles, produits, données calculées : ne les recopie jamais dans
-un champ. Rends-les normalement et entoure le plus petit bloc utile d'une région gérée :
+WordPress menus, post lists, products, computed data: never copy them into a field.
+Render them normally and wrap the smallest useful block in a managed region:
 
 ```html
 <nav data-okno-managed="menu" data-okno-edit-url="https://ADRESSE-DU-WORDPRESS/wp-admin/nav-menus.php">…</nav>
 ```
 
-## Modéliser le contenu dans ACF
+## Model the content in ACF
 
-- Un groupe de champs par modèle de page, rattaché par règle d'emplacement.
-- Noms de champs en `snake_case` descriptif (`hero_titre`, pas `field_1`).
-- Donne une **limite de caractères** aux textes courts qui cassent la mise en page quand ils
-  débordent (titres, boutons) : Okno l'applique dans l'éditeur.
-- Marque **requis** ce qui ne peut pas être vide : Okno le fait respecter à l'enregistrement.
-- Un lien avec libellé = champ `link` (URL, texte, nouvel onglet), pas deux champs texte.
+- One field group per page template, attached with a location rule.
+- Descriptive `snake_case` field names (`hero_title`, not `field_1`).
+- Give a **character limit** to short texts that break the layout when they overflow
+  (headings, buttons): Okno enforces it in the editor.
+- Mark as **required** whatever cannot be empty: Okno enforces it on save.
+- A link with a label = a `link` field (URL, text, new tab), not two text fields.
 
-## Publication
+## Publishing
 
-- Site qui lit WordPress **à chaque visite** (rendu serveur à la demande, SPA qui interroge
-  l'API) : choisir le mode « Contenu en direct » dans les réglages d'Okno. Enregistrer suffit.
-- Site **généré au build** (Astro statique, export Next) : configurer le déploiement dans les
-  réglages (build hook, GitHub Actions, Coolify, commit). Le client clique « Publier ».
+- Site that reads WordPress **on every visit** (on-demand server rendering, SPA that
+  queries the API): choose the “Live content” mode in Okno’s settings. Saving is enough.
+- Site **generated at build time** (static Astro, Next export): set up deployment in the
+  settings (build hook, GitHub Actions, Coolify, commit). The client clicks “Publish”.
 
-## Vérifications avant de livrer
+## Checks before delivery
 
-- [ ] Le bridge ne se charge que dans l'iframe (vérifier l'onglet Réseau en navigation normale).
-- [ ] L'en-tête `frame-ancestors` autorise l'adresse de wp-admin.
-- [ ] Okno → Démarrer → « Tester la connexion » est vert.
-- [ ] Chaque texte, image et lien visible appartient à un champ annoté, ou à une région gérée.
-- [ ] Aucun élément annoté n'est rendu conditionnellement à sa valeur.
-- [ ] Dans l'éditeur, aucun champ de la page n'affiche « non visible dans l'aperçu » sans raison.
-- [ ] Les listes utilisent l'index de boucle dans leurs chemins.
-- [ ] Remplacer chaque image par une image carrée, puis panoramique : la mise en page ne bouge pas.
-- [ ] Sur une page à flexible content, ajouter / déplacer / supprimer un bloc depuis l'arbre de
-      structure, enregistrer : l'aperçu reflète la nouvelle structure.
-- [ ] Cliquer un lien interne dans l'aperçu bascule l'éditeur sur la bonne page.
-- [ ] Le site public fonctionne avec le plugin Okno désactivé.
+- [ ] The bridge only loads inside the iframe (check the Network tab in normal browsing).
+- [ ] The `frame-ancestors` header allows the wp-admin address.
+- [ ] Okno → Get started → “Test the connection” is green.
+- [ ] Every visible text, image and link belongs to an annotated field, or to a managed region.
+- [ ] No annotated element is rendered conditionally on its value.
+- [ ] In the editor, no field of the page shows “not on this page” without a reason.
+- [ ] Lists use the loop index in their paths.
+- [ ] Replace each image with a square image, then a panoramic one: the layout does not move.
+- [ ] On a page with flexible content, add / move / delete a block from the structure
+      tree, then save: the preview reflects the new structure.
+- [ ] Clicking an internal link in the preview switches the editor to the right page.
+- [ ] The public site works with the Okno plugin deactivated.
 
-## À ne jamais faire
+## Never do this
 
-- Charger le bridge pour les visiteurs.
-- Mettre du texte de contenu en dur dans un composant.
-- Rendre un élément annoté seulement si sa valeur existe.
-- Renommer un champ ACF qui contient déjà du contenu.
-- Découper une valeur en plusieurs champs pour contourner la mise en forme.
-- Stocker de la mise en page (classes, tailles, couleurs, HTML de structure) dans un champ.
-- Copier dans ACF un contenu déjà géré ailleurs (menu, produit, article).
-- Laisser la taille naturelle d'une image décider de la taille d'un composant.
+- Load the bridge for visitors.
+- Hardcode content text in a component.
+- Render an annotated element only if its value exists.
+- Rename an ACF field that already holds content.
+- Split a value into several fields to work around formatting.
+- Store layout (classes, sizes, colors, structural HTML) in a field.
+- Copy into ACF content that is already managed elsewhere (menu, product, post).
+- Let an image’s natural size decide the size of a component.

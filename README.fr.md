@@ -6,7 +6,7 @@
 
 [English](README.md) · [Changelog](CHANGELOG.md) · [Paquet bridge](bridge/) · [Exemples par framework](examples/)
 
-> **État : 1.0 bêta.**
+> **État : 1.0 bêta.** L’interface est en français et en anglais (elle suit la langue du site WordPress).
 
 ---
 

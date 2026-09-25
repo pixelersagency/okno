@@ -1,0 +1,1782 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Okno package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Okno\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: assets/admin/admin.js:25 includes/admin/class-okno-admin.php:135
+msgid "Copied"
+msgstr ""
+
+#: assets/admin/editor.js:183
+msgid "You have unsaved changes. Continuing will discard them. Continue?"
+msgstr ""
+
+#: assets/admin/editor.js:198
+msgid "No publishing method is set up in the settings."
+msgstr ""
+
+#: assets/admin/editor.js:206 assets/admin/editor.js:3113
+msgid "Saving…"
+msgstr ""
+
+#. translators: %d: number of unsaved changes.
+#: assets/admin/editor.js:209
+#, javascript-format
+msgid "%d unsaved change"
+msgid_plural "%d unsaved changes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:211
+msgid "Everything is live"
+msgstr ""
+
+#: assets/admin/editor.js:212
+msgid "Everything is saved"
+msgstr ""
+
+#: assets/admin/editor.js:319
+msgid "Change undone."
+msgstr ""
+
+#: assets/admin/editor.js:328
+msgid "Change redone."
+msgstr ""
+
+#: assets/admin/editor.js:436
+msgid "The preview loaded without your content: the handshake did not complete."
+msgstr ""
+
+#. translators: %s: URL of the external link.
+#: assets/admin/editor.js:448
+#, javascript-format
+msgid "This link leaves the site (%s). Open it in a new tab?"
+msgstr ""
+
+#: assets/admin/editor.js:467
+msgid "This page can’t be edited with Okno — preview only."
+msgstr ""
+
+#: assets/admin/editor.js:478
+msgid "WordPress menus"
+msgstr ""
+
+#. translators: %s: name of the tool that manages this content (e.g. WooCommerce).
+#: assets/admin/editor.js:487
+#, javascript-format
+msgid "Managed in %s"
+msgstr ""
+
+#: assets/admin/editor.js:503
+msgid "This content doesn’t come from a field on this page: it’s edited on its own WordPress screen. Changes made there will show up here once saved."
+msgstr ""
+
+#: assets/admin/editor.js:520
+msgid "Open the edit screen"
+msgstr ""
+
+#: assets/admin/editor.js:568
+msgid "Your changes to the previous page were kept as an unsaved draft."
+msgstr ""
+
+#: assets/admin/editor.js:592
+msgid "Header"
+msgstr ""
+
+#: assets/admin/editor.js:594
+msgid "Footer"
+msgstr ""
+
+#. translators: %d: position of the section on the page.
+#: assets/admin/editor.js:596
+#, javascript-format
+msgid "Section %d"
+msgstr ""
+
+#: assets/admin/editor.js:813
+msgid "Site pages"
+msgstr ""
+
+#: assets/admin/editor.js:815
+msgid "Page structure"
+msgstr ""
+
+#: assets/admin/editor.js:830
+msgid "Page history"
+msgstr ""
+
+#: assets/admin/editor.js:875
+msgid "This content no longer exists or you’re not allowed to edit it."
+msgstr ""
+
+#: assets/admin/editor.js:881
+msgid "Couldn’t load the content list."
+msgstr ""
+
+#: assets/admin/editor.js:902
+msgid "Search pages"
+msgstr ""
+
+#: assets/admin/editor.js:909
+msgid "Search pages…"
+msgstr ""
+
+#: assets/admin/editor.js:915 includes/admin/class-okno-dashboard.php:543
+msgid "Editable content"
+msgstr ""
+
+#: assets/admin/editor.js:922
+msgid "Load more content"
+msgstr ""
+
+#: assets/admin/editor.js:1034
+msgid "(no title)"
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1069
+#, javascript-format
+msgid "Duplicate “%s”"
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1074
+#, javascript-format
+msgid "Duplicate %s"
+msgstr ""
+
+#: assets/admin/editor.js:1075
+msgid "Duplicate this content"
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1083 assets/admin/editor.js:1215
+#, javascript-format
+msgid "“%s” created as a draft."
+msgstr ""
+
+#: assets/admin/editor.js:1087
+msgid "Couldn’t duplicate this content."
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1101
+#, javascript-format
+msgid "Move “%s” to trash"
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1106
+#, javascript-format
+msgid "Move %s to trash"
+msgstr ""
+
+#: assets/admin/editor.js:1107
+msgid "Move this content to trash"
+msgstr ""
+
+#. translators: %s: content title.
+#: assets/admin/editor.js:1112
+#, javascript-format
+msgid "Move “%s” to trash?"
+msgstr ""
+
+#: assets/admin/editor.js:1117
+msgid "Content moved to trash."
+msgstr ""
+
+#: assets/admin/editor.js:1124
+msgid "Couldn’t move this content to trash."
+msgstr ""
+
+#: assets/admin/editor.js:1148
+msgid "+ New content"
+msgstr ""
+
+#: assets/admin/editor.js:1161 includes/class-okno-schema.php:197
+msgid "Title"
+msgstr ""
+
+#: assets/admin/editor.js:1172
+msgid "Type"
+msgstr ""
+
+#: assets/admin/editor.js:1188
+msgid "Create as draft"
+msgstr ""
+
+#: assets/admin/editor.js:1226
+msgid "Couldn’t create this content."
+msgstr ""
+
+#: assets/admin/editor.js:1274
+msgid "This content has no mapped URL. Check the Okno settings."
+msgstr ""
+
+#. translators: %s: date and time the unsaved changes were made.
+#: assets/admin/editor.js:1302
+#, javascript-format
+msgid "Unsaved changes from %s were found. Restore them?"
+msgstr ""
+
+#. translators: %s: section name.
+#: assets/admin/editor.js:1487
+#, javascript-format
+msgid "Delete the “%s” section?"
+msgstr ""
+
+#. translators: %s: section type name.
+#: assets/admin/editor.js:1509
+#, javascript-format
+msgid "“%s” section added."
+msgstr ""
+
+#. translators: %d: number of editable fields.
+#: assets/admin/editor.js:1536
+#, javascript-format
+msgid "%d editable field"
+msgid_plural "%d editable fields"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:1559
+msgid "Move section up"
+msgstr ""
+
+#: assets/admin/editor.js:1567
+msgid "Move section down"
+msgstr ""
+
+#: assets/admin/editor.js:1575
+msgid "Duplicate section"
+msgstr ""
+
+#: assets/admin/editor.js:1583
+msgid "Delete section"
+msgstr ""
+
+#. translators: 1: action (e.g. “Move section up”), 2: section name.
+#. translators: 1: action (e.g. “Move up”), 2: row name.
+#. translators: 1: action (e.g. “Move earlier”), 2: image title.
+#. translators: 1: location of the sub-field (e.g. “#2 › title”), 2: error message.
+#: assets/admin/editor.js:1596 assets/admin/editor.js:2551
+#: assets/admin/editor.js:2874 assets/admin/editor.js:3073
+#, javascript-format
+msgid "%1$s: %2$s"
+msgstr ""
+
+#. translators: %s: name of the flexible content field.
+#: assets/admin/editor.js:1622
+#, javascript-format
+msgid "Add a section (%s)"
+msgstr ""
+
+#: assets/admin/editor.js:1641
+msgid "Add"
+msgstr ""
+
+#: assets/admin/editor.js:1661
+msgid "Page sections"
+msgstr ""
+
+#: assets/admin/editor.js:1664 assets/admin/editor.js:1882
+msgid "Page"
+msgstr ""
+
+#: assets/admin/editor.js:1686
+msgid "Structure changed: save to see it in the preview."
+msgstr ""
+
+#: assets/admin/editor.js:1713
+msgid "The structure will appear once the preview responds."
+msgstr ""
+
+#: assets/admin/editor.js:1716
+msgid "The preview uses an old version of the bridge: update it (v3) to get navigation and structure editing."
+msgstr ""
+
+#: assets/admin/editor.js:1720
+msgid "No sections found on this page."
+msgstr ""
+
+#. translators: %s: field group name.
+#: assets/admin/editor.js:1836
+#, javascript-format
+msgid "%s — global"
+msgstr ""
+
+#: assets/admin/editor.js:1865
+msgid "Selected fields"
+msgstr ""
+
+#: assets/admin/editor.js:1870
+msgid "Pick a page in the Pages panel."
+msgstr ""
+
+#: assets/admin/editor.js:1885
+msgid "Fields in this section"
+msgstr ""
+
+#: assets/admin/editor.js:1885
+msgid "Page fields (outside sections)"
+msgstr ""
+
+#: assets/admin/editor.js:1894
+msgid "No editable fields here."
+msgstr ""
+
+#: assets/admin/editor.js:2041
+msgid "not on this page"
+msgstr ""
+
+#: assets/admin/editor.js:2042
+msgid "This field isn’t shown anywhere on this page, so it can’t be previewed live."
+msgstr ""
+
+#. translators: %s: ACF field type (e.g. google_map).
+#: assets/admin/editor.js:2051 assets/admin/editor.js:2338
+#, javascript-format
+msgid "The “%s” field type can’t be edited here."
+msgstr ""
+
+#: assets/admin/editor.js:2055
+msgid "Edit in WordPress"
+msgstr ""
+
+#: assets/admin/editor.js:2166
+msgid "Enabled"
+msgstr ""
+
+#. translators: %d: total number of rows.
+#: assets/admin/editor.js:2386
+#, javascript-format
+msgid "Show all rows (%d)"
+msgstr ""
+
+#: assets/admin/editor.js:2416
+msgid "+ Add a row"
+msgstr ""
+
+#: assets/admin/editor.js:2431
+msgid "Type of block to add"
+msgstr ""
+
+#: assets/admin/editor.js:2443
+msgid "+ Add a block"
+msgstr ""
+
+#. translators: %s: block type name.
+#: assets/admin/editor.js:2456
+#, javascript-format
+msgid "“%s” block added."
+msgstr ""
+
+#. translators: %d: row number.
+#: assets/admin/editor.js:2466
+#, javascript-format
+msgid "Row %d"
+msgstr ""
+
+#. translators: 1: block type name, 2: block number.
+#: assets/admin/editor.js:2470
+#, javascript-format
+msgid "%1$s — %2$d"
+msgstr ""
+
+#: assets/admin/editor.js:2508
+msgid "Move up"
+msgstr ""
+
+#: assets/admin/editor.js:2516
+msgid "Move down"
+msgstr ""
+
+#: assets/admin/editor.js:2524
+msgid "Duplicate"
+msgstr ""
+
+#: assets/admin/editor.js:2535
+msgid "Delete"
+msgstr ""
+
+#: assets/admin/editor.js:2643
+msgid "The media library isn’t available."
+msgstr ""
+
+#: assets/admin/editor.js:2695 assets/admin/editor.js:2717
+msgid "Replace"
+msgstr ""
+
+#: assets/admin/editor.js:2697 assets/admin/editor.js:2719
+#: assets/admin/editor.js:2730
+msgid "Choose an image"
+msgstr ""
+
+#: assets/admin/editor.js:2698 assets/admin/editor.js:2720
+#: assets/admin/editor.js:2730
+msgid "Choose a file"
+msgstr ""
+
+#: assets/admin/editor.js:2703
+msgid "Remove"
+msgstr ""
+
+#. translators: 1: shape of the image slot (e.g. “wide (1.78:1)”), 2: shape of the chosen image.
+#: assets/admin/editor.js:2758
+#, javascript-format
+msgid "This image will be cropped: the slot is %1$s, the image is %2$s. Check the framing in the preview."
+msgstr ""
+
+#. translators: %s: aspect ratio, e.g. 1.78 (as in 1.78:1).
+#: assets/admin/editor.js:2783
+#, javascript-format
+msgid "wide (%s:1)"
+msgstr ""
+
+#. translators: %s: aspect ratio, e.g. 1.50 (as in 1:1.50).
+#: assets/admin/editor.js:2787
+#, javascript-format
+msgid "tall (1:%s)"
+msgstr ""
+
+#: assets/admin/editor.js:2789
+msgid "almost square"
+msgstr ""
+
+#: assets/admin/editor.js:2832
+msgid "Move earlier"
+msgstr ""
+
+#: assets/admin/editor.js:2844
+msgid "Move later"
+msgstr ""
+
+#: assets/admin/editor.js:2856
+msgid "Remove from gallery"
+msgstr ""
+
+#. translators: %d: image position in the gallery.
+#: assets/admin/editor.js:2878
+#, javascript-format
+msgid "image %d"
+msgstr ""
+
+#: assets/admin/editor.js:2893
+msgid "+ Add images"
+msgstr ""
+
+#: assets/admin/editor.js:2895
+msgid "Add to gallery"
+msgstr ""
+
+#: assets/admin/editor.js:2939
+msgid "https://… or /contact"
+msgstr ""
+
+#: assets/admin/editor.js:2955
+msgid "Label"
+msgstr ""
+
+#: assets/admin/editor.js:2972
+msgid "Open in a new tab"
+msgstr ""
+
+#: assets/admin/editor.js:3012
+msgid "No items available."
+msgstr ""
+
+#: assets/admin/editor.js:3024
+msgid "This field is required."
+msgstr ""
+
+#: assets/admin/editor.js:3025
+msgid "Text is too long for this field."
+msgstr ""
+
+#: assets/admin/editor.js:3026
+msgid "WordPress refused to save (content is locked or a plugin is blocking it)."
+msgstr ""
+
+#: assets/admin/editor.js:3027
+msgid "Invalid email address."
+msgstr ""
+
+#: assets/admin/editor.js:3028
+msgid "Invalid or out-of-range number."
+msgstr ""
+
+#: assets/admin/editor.js:3029
+msgid "This choice isn’t allowed."
+msgstr ""
+
+#: assets/admin/editor.js:3030
+msgid "File not found or not allowed."
+msgstr ""
+
+#: assets/admin/editor.js:3031
+msgid "Linked content not found."
+msgstr ""
+
+#: assets/admin/editor.js:3032
+msgid "Category not found."
+msgstr ""
+
+#: assets/admin/editor.js:3033
+msgid "Invalid color."
+msgstr ""
+
+#: assets/admin/editor.js:3034
+msgid "Invalid link."
+msgstr ""
+
+#: assets/admin/editor.js:3035
+msgid "Invalid date."
+msgstr ""
+
+#: assets/admin/editor.js:3036
+msgid "Linked item not found."
+msgstr ""
+
+#: assets/admin/editor.js:3037
+msgid "Malformed field group: reload the page."
+msgstr ""
+
+#: assets/admin/editor.js:3038
+msgid "Malformed rows: reload the page."
+msgstr ""
+
+#: assets/admin/editor.js:3039
+msgid "Not enough rows for this field."
+msgstr ""
+
+#: assets/admin/editor.js:3040
+msgid "Too many rows for this field."
+msgstr ""
+
+#: assets/admin/editor.js:3041
+msgid "Too many items selected."
+msgstr ""
+
+#: assets/admin/editor.js:3042
+msgid "Unknown block type: reload the page."
+msgstr ""
+
+#: assets/admin/editor.js:3043
+msgid "This row no longer exists: reload the page."
+msgstr ""
+
+#: assets/admin/editor.js:3044
+msgid "WordPress doesn’t know this field: reload the page."
+msgstr ""
+
+#: assets/admin/editor.js:3045
+msgid "Okno doesn’t support this field type."
+msgstr ""
+
+#. translators: %s: technical error code.
+#: assets/admin/editor.js:3050
+#, javascript-format
+msgid "Value rejected (%s)."
+msgstr ""
+
+#: assets/admin/editor.js:3086
+msgid "This content was changed elsewhere: your changes were not saved."
+msgstr ""
+
+#: assets/admin/editor.js:3087
+msgid ""
+"This content was changed elsewhere since you opened it.\n"
+"\n"
+"Load the latest version? Your unsaved changes will be lost."
+msgstr ""
+
+#. translators: 1: field name, 2: error message.
+#: assets/admin/editor.js:3160
+#, javascript-format
+msgid "%1$s (%2$s)"
+msgstr ""
+
+#. translators: 1: number of fields not saved, 2: list of the fields and their errors.
+#: assets/admin/editor.js:3215
+#, javascript-format
+msgid "%1$d field wasn’t saved: %2$s."
+msgid_plural "%1$d fields weren’t saved: %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:3222
+msgid "Saved: it’s live."
+msgstr ""
+
+#: assets/admin/editor.js:3224
+msgid "Saved. Click “Publish” to put it live."
+msgstr ""
+
+#: assets/admin/editor.js:3232
+msgid "Saving failed."
+msgstr ""
+
+#: assets/admin/editor.js:3237 includes/admin/class-okno-admin.php:265
+#: includes/admin/class-okno-dashboard.php:657
+msgid "Save"
+msgstr ""
+
+#: assets/admin/editor.js:3254
+msgid "Loading…"
+msgstr ""
+
+#: assets/admin/editor.js:3266
+msgid "No changes saved on this page yet."
+msgstr ""
+
+#: assets/admin/editor.js:3278
+msgid "Couldn’t load the history."
+msgstr ""
+
+#: assets/admin/editor.js:3290
+msgid "Show this field"
+msgstr ""
+
+#: assets/admin/editor.js:3299 includes/admin/class-okno-dashboard.php:235
+msgid "Unknown user"
+msgstr ""
+
+#: assets/admin/editor.js:3305 assets/admin/editor.js:3307
+#: includes/admin/class-okno-dashboard.php:269
+msgid "empty"
+msgstr ""
+
+#. translators: %s: media library ID of the image or file.
+#: assets/admin/editor.js:3321
+#, javascript-format
+msgid "Image #%s"
+msgstr ""
+
+#: assets/admin/editor.js:3324 includes/admin/class-okno-dashboard.php:289
+msgid "No"
+msgstr ""
+
+#: assets/admin/editor.js:3324 includes/admin/class-okno-dashboard.php:289
+msgid "Yes"
+msgstr ""
+
+#. translators: %d: number of items.
+#: assets/admin/editor.js:3331 includes/admin/class-okno-dashboard.php:307
+#, javascript-format, php-format
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:3357
+msgid "just now"
+msgstr ""
+
+#. translators: %d: number of minutes.
+#: assets/admin/editor.js:3361
+#, javascript-format
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of hours.
+#: assets/admin/editor.js:3366
+#, javascript-format
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:3370
+msgid "yesterday"
+msgstr ""
+
+#. translators: %d: number of days.
+#: assets/admin/editor.js:3373
+#, javascript-format
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/editor.js:3399
+msgid "Couldn’t start the deployment."
+msgstr ""
+
+#: assets/admin/editor.js:3414
+msgid "Building…"
+msgstr ""
+
+#. translators: %d: estimated number of minutes before the site is live.
+#: assets/admin/editor.js:3418
+#, javascript-format
+msgid "Deployment triggered — live in ~%d min"
+msgstr ""
+
+#: assets/admin/editor.js:3421
+msgid "The site should be live now."
+msgstr ""
+
+#: assets/admin/editor.js:3427
+msgid "Live ✓"
+msgstr ""
+
+#. translators: %s: error message from the deployment service.
+#: assets/admin/editor.js:3433
+#, javascript-format
+msgid "Deployment failed — %s"
+msgstr ""
+
+#: assets/admin/editor.js:3434
+msgid "Deployment failed"
+msgstr ""
+
+#: assets/admin/editor.js:3447
+msgid "Logs"
+msgstr ""
+
+#: assets/admin/editor.js:3562 includes/admin/class-okno-admin.php:263
+msgid "Switch to dark theme"
+msgstr ""
+
+#: assets/admin/editor.js:3562
+msgid "Switch to light theme"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:47
+msgid "Visual editor"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:85
+msgid "Edit with Okno"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:94
+#: includes/admin/class-okno-dashboard.php:26
+#: includes/admin/class-okno-dashboard.php:119
+msgid "Get started"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:136
+#: includes/admin/class-okno-dashboard.php:377
+#: includes/admin/class-okno-dashboard.php:398
+#: includes/admin/class-okno-dashboard.php:408
+msgid "Copy"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:137
+msgid "Checking…"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:138
+msgid "Connecting to the site…"
+msgstr ""
+
+#. translators: 1: bridge version, 2: number of fields, 3: number of sections.
+#: includes/admin/class-okno-admin.php:140
+#, php-format
+msgid "Bridge v%1$s detected: %2$d annotated field(s) and %3$d section(s) on the home page. The editor is ready."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:141
+msgid "The bridge responds, but no field is annotated on the home page. Add data-wp-post and data-wp-field to your content elements."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:142
+msgid "The site didn’t respond within 10 seconds. Either the frame-ancestors header blocks display (step 2), or the bridge isn’t loaded (step 3)."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:143
+msgid "Can’t reach the site from the WordPress server."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:225
+msgid "Okno isn’t connected to your site yet"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:226
+msgid "Enter your site’s URL and install the bridge. The editor will then open right on your pages."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:228
+msgid "Connect the site"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:230
+msgid "Ask the site administrator to finish the setup."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:238
+msgid "Editor actions"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:240
+msgid "Back to Okno home"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:245
+msgid "No page open"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:251
+msgid "Preview width"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:252
+msgid "Desktop"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:252
+msgid "Desktop preview"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:253
+msgid "Tablet"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:253
+msgid "Tablet preview"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:254
+msgid "Mobile"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:254
+msgid "Mobile preview"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:259
+msgid "Undo and redo"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:260
+msgid "Undo (Ctrl+Z)"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:260
+msgid "Undo the last change"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:261
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:261
+msgid "Redo the undone change"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:263
+msgid "Light or dark theme"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:266
+msgid "Publish"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:271
+msgid "Site navigation"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:274
+msgid "Pages"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:277
+msgid "Structure"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:280
+msgid "History"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:292
+msgid "Pick a page on the left to show it here."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:294
+msgid "Site preview"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:297
+msgid "The site isn’t responding"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:298
+msgid "The preview loaded, but the Okno bridge didn’t check in. Two possible causes:"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:300
+msgid "Its frame-ancestors header must allow this address."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:300
+msgid "The site refuses to be displayed in wp-admin."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:301
+msgid "Check the installation."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:301
+msgid "The bridge isn’t loaded on this page."
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:304
+#: includes/admin/class-okno-dashboard.php:414
+#: includes/admin/class-okno-dashboard.php:418
+msgid "Test the connection"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:310
+msgid "Selection fields"
+msgstr ""
+
+#: includes/admin/class-okno-admin.php:322 includes/class-okno-rest.php:367
+msgid "Access denied."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:22
+msgid "Home"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:30
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:34
+#: includes/admin/class-okno-dashboard.php:748
+msgid "Deployments"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:80
+msgid "Okno sections"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:114
+msgid "First step"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:115
+msgid "Connect your site to Okno"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:116
+msgid "Enter your site’s URL, allow the editor to display it, install the bridge: four guided steps, each with a check."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:126
+msgid "Edit your site as you see it"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:127
+msgid "Click any text or image on your site to edit it. You see the result right away, before you save."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:131
+msgid "Open the editor"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:135
+msgid "View site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:145
+msgid "Site connection"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:147
+msgid "Not tested yet"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:149
+msgid "Working"
+msgstr ""
+
+#. translators: %s: relative time (e.g. 5 mins).
+#: includes/admin/class-okno-dashboard.php:153
+#, php-format
+msgid "Checked %s ago"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:157
+msgid "Needs attention"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:158
+msgid "The last test failed."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:163
+#: includes/admin/class-okno-dashboard.php:583
+msgid "Publishing"
+msgstr ""
+
+#. translators: 1: deployment status, 2: relative time (e.g. 5 mins).
+#: includes/admin/class-okno-dashboard.php:172
+#, php-format
+msgid "Last deployment: %1$s, %2$s ago"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:179
+msgid "Changes this week"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:184
+msgid "Recent changes"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:190
+msgid "No changes yet"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:191
+msgid "Every save made in the editor shows up here: who changed which field, when, with the before and after values."
+msgstr ""
+
+#. translators: 1: author, 2: content title, 3: relative time (e.g. 5 mins).
+#: includes/admin/class-okno-dashboard.php:234
+#, php-format
+msgid "%1$s · %2$s · %3$s ago"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:236
+msgid "deleted content"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:245
+msgid "Open"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:251
+msgid "Before"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:256
+msgid "After"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:349
+msgid "We’re going to make this site editable with Okno, the visual editor for WordPress. Okno has precise instructions to follow throughout the project; you’ll find them below. Read them in full before writing any code, and follow them for every component."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:350
+msgid "Site repository:"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:350
+msgid "The site already exists. Install the bridge, then annotate every piece of displayed content with its matching WordPress field, following the instructions. Finish with the checklist."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:351
+msgid "Site idea or brief:"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:351
+msgid "We’re starting from scratch. Build the site and its ACF content model, following the instructions from the very first component. Finish with the checklist."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:354
+msgid "Connect a site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:355
+msgid "Make your site editable"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:356
+msgid "Okno works with any site that reads its content from WordPress: React, Next.js, Remix, Vite, Astro, Nuxt, SvelteKit or plain HTML. Four steps, each one verifiable."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:361
+#: includes/admin/class-okno-dashboard.php:528
+msgid "Site URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:366
+msgid "The site’s public URL and, if you have one, the preview URL to show in the editor."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:368
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:368
+msgid "Enter the URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:373
+msgid "Allow the editor to display the site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:374
+msgid "The site must allow being displayed in wp-admin. Add this HTTP header to its responses (host settings, middleware or the framework’s headers file)."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:381
+msgid "Check headers"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:388
+msgid "Install the bridge"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:389
+msgid "A small script that only loads inside the editor. Your visitors never download it."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:391
+msgid "HTML · Astro · Nuxt · SvelteKit"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:392
+msgid "React · Next.js · Remix · Vite"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:395
+msgid "Put okno-bridge.js in the site’s public folder, then add this code to the layout’s <head>."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:401
+msgid "Download okno-bridge.js"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:405
+msgid "The component loads the bridge only inside the editor, through a dynamic import."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:415
+msgid "Okno opens your site in the background and waits for the bridge to check in. If it responds, the editor is ready."
+msgstr ""
+
+#. translators: 1: bridge version, 2: number of fields, 3: relative time (e.g. 5 mins).
+#: includes/admin/class-okno-dashboard.php:429
+#, php-format
+msgid "Bridge v%1$s detected, %2$d annotated field(s) on the home page. Checked %3$s ago."
+msgstr ""
+
+#. translators: %s: relative time (e.g. 5 mins).
+#: includes/admin/class-okno-dashboard.php:431
+#, php-format
+msgid "The bridge didn’t respond to the last test, %s ago."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:440
+msgid "Annotate your content"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:442
+msgid "Every element that displays a WordPress field carries that field’s name. The bridge uses it to know what to update, and the editor to know which field to open on click."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:446
+msgid "All the annotations, rules and the checklist are in the guide below."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:449
+msgid "With an AI agent"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:451
+msgid "Claude, Codex, Cursor…"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:452
+msgid "Let the agent do the integration"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:453
+msgid "Okno gives your agent a precise contract: where to load the bridge, how to name and annotate fields, which mistakes to avoid, what to check before shipping. Copy the right prompt, then add your repository or brief."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:457
+msgid "Integrate an existing site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:458
+msgid "The site already reads its content from WordPress. The agent installs the bridge and annotates all the content."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:459
+#: includes/admin/class-okno-dashboard.php:465
+msgid "Copy prompt"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:463
+msgid "Build a new site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:464
+msgid "The agent designs the site and its ACF content model, editable with Okno from the very first component."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:471
+msgid "Read the full instructions"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:472
+msgid "Agent instructions"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:496
+msgid "Settings saved."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:508
+msgid "GitHub configuration check"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:512
+msgid "Error"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:512
+msgid "OK"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:512
+msgid "Warning"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:524
+msgid "Your site"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:525
+msgid "The site your clients edit, as visitors see it."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:534
+msgid "Preview URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:537
+msgid "Optional. Shown in the editor instead of the public site: useful when the public site is generated at build time and an up-to-date version is served elsewhere."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:544
+msgid "The content types offered in the editor, and the URL of each one on the site."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:547
+msgid "Content types"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:559
+msgid "URLs on the site"
+msgstr ""
+
+#. translators: %s: post type name.
+#: includes/admin/class-okno-dashboard.php:565
+#, php-format
+msgid "URL pattern for %s"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:569
+msgid "Available variables: {slug}, {id}. Empty = /{slug}. The home page always points to /."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:574
+msgid "Field holding the URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:577
+msgid "Optional. Name of an ACF field or meta key that holds each item’s actual URL (for example /services/audit). Takes priority over the patterns above."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:584
+msgid "What happens when a client clicks “Publish”."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:586
+msgid "Publishing mode"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:598
+msgid "Build hook URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:607
+msgid "Coolify webhook URL"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:610
+msgid "Coolify token"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:615
+msgid "Build time"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:617
+msgid "minutes"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:618
+msgid "Shown to the client after “Publish”, since the build can’t be tracked live."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:625
+msgid "GitHub repository"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:630
+msgid "Workflow file"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:635
+msgid "Branch"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:638
+msgid "Fine-grained token limited to this repository only: “Actions: Read and write” for GitHub Actions, “Contents: Read and write” for the deployment commit. Don’t use a classic token: it grants access to all your repositories."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:638
+msgid "GitHub token"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:643
+msgid "Delay between deployments"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:645
+msgid "seconds"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:652
+msgid "Secrets are encrypted in the database with a key derived from the WordPress salts."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:655
+msgid "Save and test GitHub"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:674
+msgid "Not set"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:674
+msgid "Saved — leave empty to keep it"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:676
+msgid "This secret can’t be read anymore: the WordPress salts have changed (host or security plugin). Enter it again."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:678
+msgid "Delete this secret"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:700
+msgid "Deployment history"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:705
+msgid "No deployments yet"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:706
+msgid "Every click on “Publish” in the editor shows up here with its result."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:712
+msgid "Date"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:713
+msgid "By"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:714
+msgid "Method"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:715
+msgid "Result"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:730
+msgid "View build"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:741
+msgid "Weekly activity"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:746
+msgid "Week"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:747
+msgid "Saves"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:779
+msgid "Live content"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:780
+msgid "The site reads WordPress on every visit. Saving is enough, nothing to publish."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:783
+msgid "Build hook"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:784
+msgid "Vercel, Netlify, Cloudflare Pages… Okno calls the rebuild URL."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:787
+msgid "GitHub Actions"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:788
+msgid "Triggers a workflow and tracks the build live."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:791
+msgid "GitHub commit"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:792
+msgid "For hosts that deploy on every push."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:795
+msgid "Coolify"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:796
+msgid "Coolify deployment webhook."
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:806
+msgid "Not set up"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:811
+msgid "Pending"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:812
+msgid "Building"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:813
+msgid "Triggered"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:814
+msgid "Live"
+msgstr ""
+
+#: includes/admin/class-okno-dashboard.php:815
+msgid "Failed"
+msgstr ""
+
+#: includes/class-okno-rest.php:237 includes/class-okno-rest.php:432
+#: includes/class-okno-rest.php:455 includes/class-okno-schema.php:29
+msgid "Content not found."
+msgstr ""
+
+#: includes/class-okno-rest.php:251
+msgid "No site URL set."
+msgstr ""
+
+#. translators: %s: network error message.
+#: includes/class-okno-rest.php:268
+#, php-format
+msgid "Can’t reach the site from the server: %s"
+msgstr ""
+
+#: includes/class-okno-rest.php:309 includes/class-okno-rest.php:318
+msgid "The site allows wp-admin in its frame-ancestors header."
+msgstr ""
+
+#. translators: 1: current frame-ancestors value, 2: wp-admin origin.
+#: includes/class-okno-rest.php:326
+#, php-format
+msgid "The site’s frame-ancestors header (%1$s) doesn’t allow %2$s. Add this address."
+msgstr ""
+
+#. translators: %s: X-Frame-Options value.
+#: includes/class-okno-rest.php:335
+#, php-format
+msgid "The site sends X-Frame-Options: %s, which blocks any display in wp-admin. Remove this header and use frame-ancestors."
+msgstr ""
+
+#: includes/class-okno-rest.php:341
+msgid "No header blocks display, so the editor will work. To stop other sites from embedding yours, add frame-ancestors anyway."
+msgstr ""
+
+#: includes/class-okno-rest.php:397
+msgid "A title is required."
+msgstr ""
+
+#: includes/class-okno-rest.php:437
+msgid "Couldn’t delete this content."
+msgstr ""
+
+#. translators: %s: original title.
+#: includes/class-okno-rest.php:461
+#, php-format
+msgid "%s (copy)"
+msgstr ""
+
+#: includes/class-okno-rest.php:530
+msgid "Nothing to save."
+msgstr ""
+
+#: includes/class-okno-rest.php:541
+msgid "This content was changed elsewhere since you opened it. Reload to get the latest version."
+msgstr ""
+
+#: includes/class-okno-schema.php:190
+msgid "Main content"
+msgstr ""
+
+#: includes/class-okno-schema.php:207
+msgid "Featured image"
+msgstr ""
+
+#: includes/deploy/class-okno-build-hook-driver.php:21
+msgid "No build hook URL set."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/deploy/class-okno-build-hook-driver.php:46
+#, php-format
+msgid "The build hook responded with %d."
+msgstr ""
+
+#: includes/deploy/class-okno-coolify-driver.php:23
+msgid "No Coolify webhook URL set."
+msgstr ""
+
+#: includes/deploy/class-okno-coolify-driver.php:28
+msgid "The Coolify token can’t be read (the WordPress salts have probably changed). Enter it again in Okno settings."
+msgstr ""
+
+#: includes/deploy/class-okno-coolify-driver.php:32
+msgid "No Coolify token set."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/deploy/class-okno-coolify-driver.php:61
+#, php-format
+msgid "Coolify responded with %d."
+msgstr ""
+
+#: includes/deploy/class-okno-deploy-manager.php:56
+msgid "A save is in progress. Try again in a few seconds."
+msgstr ""
+
+#: includes/deploy/class-okno-deploy-manager.php:66
+msgid "A deployment is already in progress."
+msgstr ""
+
+#. translators: %d: number of seconds.
+#: includes/deploy/class-okno-deploy-manager.php:79
+#, php-format
+msgid "Please wait %d s between deployments."
+msgstr ""
+
+#: includes/deploy/class-okno-deploy-manager.php:88
+msgid "No deployment method set in Okno settings."
+msgstr ""
+
+#: includes/deploy/class-okno-deploy-manager.php:137
+msgid "Unknown deployment."
+msgstr ""
+
+#: includes/deploy/class-okno-deploy-manager.php:177
+msgid "No status after 30 minutes: deployment marked as lost."
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:24
+msgid "Incomplete GitHub settings (repository, workflow, branch)."
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:29
+#: includes/deploy/class-okno-github-commit-driver.php:35
+msgid "The GitHub PAT can’t be read (the WordPress salts have probably changed). Enter it again in Okno settings."
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:33
+#: includes/deploy/class-okno-github-commit-driver.php:39
+#: includes/deploy/class-okno-github-preflight.php:34
+msgid "No GitHub PAT set."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/deploy/class-okno-github-actions-driver.php:64
+#: includes/deploy/class-okno-github-commit-driver.php:152
+#, php-format
+msgid "GitHub responded with %d."
+msgstr ""
+
+#. translators: 1: workflow file, 2: repository (owner/name).
+#: includes/deploy/class-okno-github-actions-driver.php:70
+#, php-format
+msgid "GitHub couldn’t find the workflow “%1$s” in %2$s (or the PAT has no access to this repository). Open Okno settings and save them to run the configuration check."
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:76
+msgid "GitHub rejected the PAT: the token is invalid, revoked or expired. Enter it again in Okno settings."
+msgstr ""
+
+#. translators: %s: error message from GitHub.
+#: includes/deploy/class-okno-github-actions-driver.php:79
+#, php-format
+msgid "GitHub refused the request (403): the PAT probably lacks the “Actions: write” permission. Details: %s"
+msgstr ""
+
+#. translators: 1: branch name, 2: error message from GitHub.
+#: includes/deploy/class-okno-github-actions-driver.php:82
+#, php-format
+msgid "GitHub rejected the trigger (422): the branch “%1$s” doesn’t exist, or the workflow doesn’t accept workflow_dispatch. Details: %2$s"
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:123
+msgid "Deployment complete."
+msgstr ""
+
+#. translators: %s: GitHub run conclusion.
+#: includes/deploy/class-okno-github-actions-driver.php:124
+#, php-format
+msgid "The workflow failed (%s)."
+msgstr ""
+
+#: includes/deploy/class-okno-github-actions-driver.php:203
+#: includes/deploy/class-okno-github-commit-driver.php:123
+msgid "GitHub PAT missing or unreadable."
+msgstr ""
+
+#: includes/deploy/class-okno-github-commit-driver.php:30
+msgid "Incomplete GitHub settings (repository, branch)."
+msgstr ""
+
+#: includes/deploy/class-okno-github-commit-driver.php:56
+msgid "Branch not found on GitHub."
+msgstr ""
+
+#: includes/deploy/class-okno-github-commit-driver.php:66
+msgid "Can’t read the HEAD commit."
+msgstr ""
+
+#: includes/deploy/class-okno-github-commit-driver.php:88
+msgid "Couldn’t create the commit."
+msgstr ""
+
+#: includes/deploy/class-okno-github-preflight.php:30
+msgid "The GitHub PAT can’t be read (the WordPress salts have changed). Enter it again."
+msgstr ""
+
+#: includes/deploy/class-okno-github-preflight.php:37
+msgid "Repository and branch are required."
+msgstr ""
+
+#. translators: %s: error message.
+#: includes/deploy/class-okno-github-preflight.php:43
+#, php-format
+msgid "Can’t reach GitHub: %s"
+msgstr ""
+
+#: includes/deploy/class-okno-github-preflight.php:48
+msgid "GitHub rejected the PAT (401): the token is invalid, revoked or expired."
+msgstr ""
+
+#. translators: %s: repository (owner/name).
+#: includes/deploy/class-okno-github-preflight.php:54
+#, php-format
+msgid "Repository “%s” not found: it doesn’t exist, or the PAT has no access to it (a fine-grained PAT must list this repository explicitly)."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/deploy/class-okno-github-preflight.php:59
+#, php-format
+msgid "GitHub responded with %d for the repository."
+msgstr ""
+
+#. translators: %s: repository (owner/name).
+#: includes/deploy/class-okno-github-preflight.php:62
+#, php-format
+msgid "Repository “%s” is accessible."
+msgstr ""
+
+#. translators: %s: branch name.
+#: includes/deploy/class-okno-github-preflight.php:72
+#, php-format
+msgid "Branch “%s” found."
+msgstr ""
+
+#. translators: %s: branch name.
+#: includes/deploy/class-okno-github-preflight.php:74
+#, php-format
+msgid "Branch “%s” not found in this repository."
+msgstr ""
+
+#: includes/deploy/class-okno-github-preflight.php:109
+msgid "Can’t list the repository’s workflows (missing Actions permission?)."
+msgstr ""
+
+#. translators: 1: workflow file, 2: workflow state.
+#: includes/deploy/class-okno-github-preflight.php:124
+#, php-format
+msgid "Workflow “%1$s” found but disabled (state: %2$s)."
+msgstr ""
+
+#: includes/deploy/class-okno-github-preflight.php:126
+#, php-format
+msgid "Workflow “%s” found and active."
+msgstr ""
+
+#. translators: %s: workflow file.
+#: includes/deploy/class-okno-github-preflight.php:131
+#, php-format
+msgid "This repository has no GitHub Actions workflows: “%s” can never be triggered."
+msgstr ""
+
+#. translators: 1: workflow file, 2: comma-separated list of workflows.
+#: includes/deploy/class-okno-github-preflight.php:137
+#, php-format
+msgid "Workflow “%1$s” not found. Available workflows: %2$s."
+msgstr ""
+
+#. translators: %s: date.
+#: includes/deploy/class-okno-github-preflight.php:161
+#, php-format
+msgid "The PAT expired on %s."
+msgstr ""
+
+#. translators: 1: date, 2: number of days.
+#: includes/deploy/class-okno-github-preflight.php:164
+#, php-format
+msgid "The PAT expires on %1$s (in %2$d day)."
+msgid_plural "The PAT expires on %1$s (in %2$d days)."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: date.
+#: includes/deploy/class-okno-github-preflight.php:166
+#, php-format
+msgid "PAT valid until %s."
+msgstr ""
