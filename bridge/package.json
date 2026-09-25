@@ -41,7 +41,7 @@
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pixelersagency/okno.git",
+		"url": "git+https://github.com/pixelersagency/okno.git",
 		"directory": "bridge"
 	},
 	"homepage": "https://github.com/pixelersagency/okno#readme",
