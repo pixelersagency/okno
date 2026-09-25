@@ -47,4 +47,4 @@ To try the editor, symlink `plugin/` into `wp-content/plugins/okno` on a local W
 
 1. Bump the version in `plugin/okno.php` (header and `OKNO_VERSION`), `plugin/readme.txt` (Stable tag) and `bridge/package.json`.
 2. Add a section to `CHANGELOG.md`.
-3. Tag and push: `git tag v1.2.3 && git push --tags`. The release workflow builds the zip, publishes the GitHub release, and publishes the bridge to npm when the `NPM_TOKEN` secret is set.
+3. Tag and push: `git tag v1.2.3 && git push --tags`. The release workflow builds the zip, publishes the GitHub release, and publishes the bridge to npm through Trusted Publishing (no token needed).

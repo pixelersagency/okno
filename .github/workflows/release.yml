@@ -1,7 +1,8 @@
 name: Release
 
 # Push a tag like v1.0.0 or v1.0.0-beta.2: the plugin zip is attached to a
-# GitHub release, and the bridge is published to npm when NPM_TOKEN is set.
+# GitHub release, and the bridge is published to npm through Trusted Publishing
+# (OIDC, configured on npmjs.com for this workflow): no npm token is stored.
 on:
   push:
     tags: ['v*']
@@ -13,14 +14,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Tag matches plugin version
@@ -61,11 +60,10 @@ jobs:
           fi
 
       - name: Publish bridge to npm
-        if: ${{ env.NPM_TOKEN != '' }}
         working-directory: bridge
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          # Trusted Publishing needs npm 11.5.1 or later.
+          npm install -g npm@latest
           TAG=latest
           case "$VERSION" in *-*) TAG=next ;; esac
           if npm view "$(node -p "require('./package.json').name")@$VERSION" version > /dev/null 2>&1; then
