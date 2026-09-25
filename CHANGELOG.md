@@ -2,6 +2,15 @@
 
 All notable changes to Okno are documented here. The project follows [Semantic Versioning](https://semver.org/). The plugin and the bridge package share one version number.
 
+## [1.0.0-beta.5] — 2026-09-25
+
+### Fixed
+
+- Update checks no longer send the site address to GitHub (the User-Agent only carries Okno's version).
+- When GitHub doesn't answer (rate limit on shared hosting, outage), Okno keeps offering the last known release instead of hiding a pending update.
+- WordPress compatibility is read from the release's `readme.txt` ("Tested up to", now 7.1) instead of a hardcoded value, so updates are no longer flagged as untested.
+- Quotes in release notes render as quotes in "View details" instead of showing a literal `>`.
+
 ## [1.0.0-beta.4] — 2026-09-25
 
 ### Added
@@ -61,6 +70,7 @@ First public release.
 - Managed regions (`data-okno-managed`) explain where to edit content Okno doesn't own.
 - Explicit sections (`data-okno-section`, `data-okno-layout`) take precedence over auto-detected ones.
 
+[1.0.0-beta.5]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.5
 [1.0.0-beta.4]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.4
 [1.0.0-beta.3]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/pixelersagency/okno/releases/tag/v1.0.0-beta.2

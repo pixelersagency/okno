@@ -23,6 +23,7 @@ class Okno_Updater {
 	const REPO      = 'pixelersagency/okno';
 	const ASSET     = 'okno.zip';
 	const TRANSIENT = 'okno_update_release';
+	const OPTION    = 'okno_update_last_release';
 	const SLUG      = 'okno';
 
 	public static function init() {
@@ -71,28 +72,38 @@ class Okno_Updater {
 			return false; // Release sans zip installable : on ne propose rien.
 		}
 
-		return array(
+		$update = array(
 			'id'           => 'github.com/' . self::REPO,
 			'slug'         => self::SLUG,
 			'version'      => ltrim( (string) $release['tag_name'], 'vV' ),
 			'url'          => 'https://github.com/' . self::REPO,
 			'package'      => $package,
 			'requires_php' => '7.4',
-			'tested'       => '6.8',
 			'icons'        => array( 'svg' => OKNO_URL . 'assets/img/okno-mark.svg' ),
 		);
+		// « Tested up to » du readme.txt de cette release : sans lui, WordPress
+		// affiche une compatibilité « inconnue » avec sa version.
+		if ( ! empty( $release['tested'] ) ) {
+			$update['tested'] = $release['tested'];
+		}
+		return $update;
 	}
 
 	/**
 	 * Dernière release, mise en cache 6 h (1 h après une erreur, pour ne pas
 	 * épuiser la limite de 60 requêtes/heure de l'API GitHub sans jeton).
 	 *
+	 * Si GitHub ne répond pas (limite atteinte sur un hébergement mutualisé,
+	 * panne), on renvoie la dernière release connue : sans ça, une mise à jour
+	 * déjà proposée disparaîtrait de la page Extensions jusqu'au prochain
+	 * succès.
+	 *
 	 * @return array|null
 	 */
 	public static function latest_release() {
 		$cached = get_transient( self::TRANSIENT );
 		if ( is_array( $cached ) ) {
-			return empty( $cached['tag_name'] ) ? null : $cached;
+			return empty( $cached['tag_name'] ) ? self::last_known() : $cached;
 		}
 
 		$response = wp_remote_get(
@@ -101,7 +112,8 @@ class Okno_Updater {
 				'timeout' => 10,
 				'headers' => array(
 					'Accept'     => 'application/vnd.github+json',
-					'User-Agent' => 'Okno/' . OKNO_VERSION . '; ' . home_url(),
+					// Version seulement : l'adresse du site ne regarde pas GitHub.
+					'User-Agent' => 'Okno/' . OKNO_VERSION,
 				),
 			)
 		);
@@ -120,9 +132,45 @@ class Okno_Updater {
 			}
 		}
 
+		if ( $release ) {
+			$release['tested'] = self::tested_up_to( $release['tag_name'] );
+			update_option( self::OPTION, $release, false );
+		}
+
 		// Échec mis en cache aussi (tableau vide), plus brièvement.
 		set_transient( self::TRANSIENT, $release ? $release : array(), $release ? 6 * HOUR_IN_SECONDS : HOUR_IN_SECONDS );
-		return $release;
+		return $release ? $release : self::last_known();
+	}
+
+	/**
+	 * Dernière release obtenue avec succès, ou null.
+	 *
+	 * @return array|null
+	 */
+	private static function last_known() {
+		$last = get_option( self::OPTION );
+		return is_array( $last ) && ! empty( $last['tag_name'] ) ? $last : null;
+	}
+
+	/**
+	 * « Tested up to » du readme.txt publié avec la release (fichier brut,
+	 * servi par un CDN hors limite de l'API).
+	 *
+	 * @param string $tag Tag de la release.
+	 * @return string Version de WordPress, ou '' si introuvable.
+	 */
+	private static function tested_up_to( $tag ) {
+		$response = wp_remote_get(
+			'https://raw.githubusercontent.com/' . self::REPO . '/' . rawurlencode( $tag ) . '/plugin/readme.txt',
+			array(
+				'timeout' => 10,
+				'headers' => array( 'User-Agent' => 'Okno/' . OKNO_VERSION ),
+			)
+		);
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return '';
+		}
+		return preg_match( '/^Tested up to:\s*([0-9.]+)\s*$/mi', wp_remote_retrieve_body( $response ), $m ) ? $m[1] : '';
 	}
 
 	/**
@@ -194,6 +242,9 @@ class Okno_Updater {
 			}
 			if ( preg_match( '/^#{1,6} (.*)$/', $inline, $m ) ) {
 				$html .= '<h4>' . $m[1] . '</h4>';
+			} elseif ( preg_match( '/^&gt; ?(.*)$/', $inline, $m ) ) {
+				// Citation (« > … ») : « > » est déjà échappé en &gt; à ce stade.
+				$html .= '<blockquote><p>' . $m[1] . '</p></blockquote>';
 			} elseif ( '' !== $inline ) {
 				$html .= '<p>' . $inline . '</p>';
 			}

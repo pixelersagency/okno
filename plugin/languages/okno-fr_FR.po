@@ -1497,15 +1497,15 @@ msgstr "Contenu principal"
 msgid "Featured image"
 msgstr "Image mise en avant"
 
-#: includes/class-okno-updater.php:157
+#: includes/class-okno-updater.php:205
 msgid "Visual editing for headless WordPress: edit your ACF fields live on your real front end, from wp-admin."
 msgstr "L’édition visuelle pour WordPress headless : modifiez vos champs ACF en direct sur votre vrai site, depuis wp-admin."
 
-#: includes/class-okno-updater.php:159
+#: includes/class-okno-updater.php:207
 msgid "Release notes on GitHub"
 msgstr "Notes de version sur GitHub"
 
-#: includes/class-okno-updater.php:226
+#: includes/class-okno-updater.php:277
 msgid "Couldn’t prepare the Okno update folder."
 msgstr "Impossible de préparer le dossier de mise à jour d’Okno."
 
